@@ -11,7 +11,7 @@ from datetime import datetime
 from pathlib import Path
 
 from flask import Flask, jsonify, send_from_directory, request
-from scraper import run_full_scrape, fetch_car_urls, parse_car, get_session, DELAY
+from scraper import fetch_car_urls, parse_car, get_session, DELAY
 
 app = Flask(__name__, static_folder="static")
 
@@ -39,7 +39,7 @@ def _load_cache():
 def _save_cache(data):
     DATA_FILE.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
 
-def _scrape_thread():
+def _scrape_thread(user_ids):
     global scrape_state
     scrape_state["log"] = []
     scrape_state["progress"] = 0
@@ -49,9 +49,9 @@ def _scrape_thread():
         scrape_state["log"].append({"msg": msg, "level": level, "t": datetime.utcnow().isoformat()})
 
     try:
-        log("🔍 Збираємо посилання зі сторінки пошуку...")
+        log(f"🔍 Збираємо посилання зі сторінки пошуку ({len(user_ids)} продавців)...")
         sess = get_session()
-        urls = fetch_car_urls(sess)
+        urls = fetch_car_urls(sess, user_ids)
 
         if not urls:
             log("❌ Посилання не знайдено", "error")
@@ -98,9 +98,13 @@ def index():
 def api_scrape():
     if scrape_state["running"]:
         return jsonify({"error": "Scrape already running"}), 409
+    
+    data = request.json or {}
+    user_ids = data.get("user_ids", ["1640523"])
+    
     scrape_state["running"] = True
-    threading.Thread(target=_scrape_thread, daemon=True).start()
-    return jsonify({"status": "started"})
+    threading.Thread(target=_scrape_thread, args=(user_ids,), daemon=True).start()
+    return jsonify({"status": "started", "user_ids": user_ids})
 
 @app.route("/api/status")
 def api_status():

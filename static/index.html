@@ -3,374 +3,505 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PRIME AUTO — Панель керування</title>
+<title>PRIME AUTO — Аналітика та Керування</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#030303;--panel:rgba(20,20,20,.75);--ac:#F97316;--ac2:#fb923c;--border:rgba(255,255,255,.08);--text:#fff;--muted:#a0a0a0;--green:#4ade80;--blue:#60a5fa;--red:#f87171;--font:'Outfit',sans-serif;}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;padding:2rem 1rem;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
-.glow{position:fixed;border-radius:50%;pointer-events:none;filter:blur(160px);opacity:.08;}
-.g1{width:600px;height:600px;background:#F97316;top:-200px;left:-200px;}
-.g2{width:400px;height:400px;background:#3b82f6;bottom:-100px;right:-150px;}
-.wrap{max-width:1300px;margin:0 auto;position:relative;z-index:1;}
-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:2.5rem;flex-wrap:wrap;gap:1rem;}
-.logo{font-size:1.2rem;font-weight:900;letter-spacing:.15em;}
-.logo span{background:linear-gradient(135deg,#F97316,#c2410c);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.header-right{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;}
-.badge-info{padding:.35rem .9rem;border-radius:100px;font-size:.78rem;font-weight:600;border:1px solid var(--border);color:var(--muted);}
-.card{background:var(--panel);backdrop-filter:blur(24px);border:1px solid var(--border);border-radius:20px;padding:1.5rem 1.75rem;margin-bottom:1.25rem;}
-.card-title{font-size:.78rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ac2);margin-bottom:1.25rem;}
-.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:.75rem;margin-bottom:1.5rem;}
-.stat{background:rgba(249,115,22,.07);border:1px solid rgba(249,115,22,.18);border-radius:14px;padding:1rem;text-align:center;}
-.stat-n{font-size:1.9rem;font-weight:900;color:var(--ac);}
-.stat-l{font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-top:.15rem;}
-.btn{padding:.75rem 1.5rem;border-radius:10px;font-family:var(--font);font-size:.88rem;font-weight:700;cursor:pointer;transition:all .3s;border:none;display:inline-flex;align-items:center;gap:.4rem;}
-.btn-primary{background:linear-gradient(135deg,#F97316,#c2410c);color:#fff;}
-.btn-primary:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 12px 32px rgba(249,115,22,.35);}
-.btn-primary:disabled{opacity:.45;cursor:not-allowed;}
-.btn-green{background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;}
-.btn-green:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(22,163,74,.3);}
-.btn-blue{background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;}
-.btn-blue:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(37,99,235,.3);}
-.btn-purple{background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;}
-.btn-purple:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(124,58,237,.3);}
-.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--muted);}
-.btn-ghost:hover{border-color:var(--ac2);color:var(--ac2);}
-.btn-row{display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:1.5rem;}
-.prog-bar-bg{background:rgba(255,255,255,.06);border-radius:100px;height:8px;overflow:hidden;margin-bottom:1rem;}
-.prog-bar{height:100%;background:linear-gradient(90deg,#F97316,#c2410c);width:0%;transition:width .4s ease;border-radius:100px;}
-.prog-log{font-size:.78rem;color:var(--muted);max-height:200px;overflow-y:auto;display:flex;flex-direction:column;gap:.2rem;}
-.ll{padding:.2rem .6rem;border-radius:6px;font-family:monospace;}
-.lok{color:var(--green);}.lerr{color:var(--red);}.linfo{color:var(--ac2);}
+/* Apple-style Dashboard */
+:root {
+  --bg: #f5f5f7;
+  --panel: rgba(255, 255, 255, 0.7);
+  --panel-solid: #ffffff;
+  --text: #1d1d1f;
+  --text-muted: #86868b;
+  --border: rgba(0, 0, 0, 0.08);
+  --ac: #0071e3; /* Apple Blue */
+  --ac-hover: #0077ed;
+  --green: #34c759;
+  --red: #ff3b30;
+  --orange: #ff9500;
+  --purple: #af52de;
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --radius: 16px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.04);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #000000;
+    --panel: rgba(28, 28, 30, 0.7);
+    --panel-solid: #1c1c1e;
+    --text: #f5f5f7;
+    --text-muted: #86868b;
+    --border: rgba(255, 255, 255, 0.1);
+    --ac: #0a84ff;
+    --ac-hover: #0071e3;
+    --shadow: 0 4px 24px rgba(0,0,0,0.2);
+  }
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--font); background: var(--bg); color: var(--text);
+  min-height: 100vh; padding: 2rem; -webkit-font-smoothing: antialiased;
+}
+/* Blurred background shapes */
+.bg-shape {
+  position: fixed; border-radius: 50%; filter: blur(100px); opacity: 0.15; z-index: -1;
+}
+.s1 { top: -100px; left: -100px; width: 400px; height: 400px; background: var(--ac); }
+.s2 { bottom: -100px; right: -100px; width: 500px; height: 500px; background: var(--purple); }
+
+.container { max-width: 1400px; margin: 0 auto; }
+
+/* Header */
+.header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem; }
+.title h1 { font-size: 32px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 4px; }
+.title p { color: var(--text-muted); font-size: 14px; }
+.actions { display: flex; gap: 12px; align-items: center; }
+
+/* Buttons */
+.btn {
+  padding: 10px 18px; border-radius: 100px; font-family: inherit; font-size: 14px; font-weight: 600;
+  border: none; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px;
+}
+.btn-primary { background: var(--ac); color: #fff; }
+.btn-primary:hover:not(:disabled) { background: var(--ac-hover); transform: scale(1.02); }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-secondary { background: var(--panel-solid); color: var(--text); border: 1px solid var(--border); }
+.btn-secondary:hover { background: var(--border); }
+
+/* Layout Grid */
+.grid-layout { display: grid; grid-template-columns: 320px 1fr; gap: 24px; align-items: start; }
+@media (max-width: 1024px) { .grid-layout { grid-template-columns: 1fr; } }
+
+/* Cards */
+.card {
+  background: var(--panel); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
+  border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow);
+  margin-bottom: 24px;
+}
+.card h3 { font-size: 16px; font-weight: 600; margin-bottom: 16px; color: var(--text); }
+
+/* Sellers List */
+.seller-input { display: flex; gap: 8px; margin-bottom: 16px; }
+.input {
+  flex: 1; padding: 10px 16px; border-radius: 12px; border: 1px solid var(--border);
+  background: rgba(255,255,255,0.05); color: var(--text); font-family: inherit; font-size: 14px;
+}
+.input:focus { outline: none; border-color: var(--ac); }
+.seller-list { display: flex; flex-direction: column; gap: 8px; }
+.seller-item {
+  display: flex; justify-content: space-between; align-items: center; padding: 10px 14px;
+  background: rgba(134, 134, 139, 0.1); border-radius: 10px; font-size: 13px; font-weight: 500;
+}
+.del-btn { color: var(--red); cursor: pointer; background: none; border: none; font-size: 16px; }
+
+/* Analytics Grid */
+.analytics { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; }
+.stat-box {
+  background: var(--panel-solid); border: 1px solid var(--border); border-radius: 14px; padding: 16px;
+  display: flex; flex-direction: column; justify-content: center;
+}
+.stat-val { font-size: 24px; font-weight: 700; margin-bottom: 4px; letter-spacing: -0.02em; }
+.stat-lbl { font-size: 12px; color: var(--text-muted); font-weight: 500; }
+.stat-sub { font-size: 11px; color: var(--text-muted); margin-top: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Filters */
+.filters-wrap { display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px; }
+.filter-group { display: flex; flex-wrap: wrap; gap: 8px; }
+.f-btn {
+  padding: 8px 16px; border-radius: 10px; border: 1px solid var(--border); background: transparent;
+  color: var(--text); font-size: 13px; font-weight: 500; cursor: pointer; transition: 0.2s;
+}
+.f-btn.active { background: var(--ac); color: #fff; border-color: var(--ac); }
+.f-reset { color: var(--red); border-color: rgba(255,59,48,0.3); }
 
 /* Table */
-.tbl-wrap{overflow-x:auto;border-radius:14px;border:1px solid var(--border);margin-top:.5rem;}
-table{width:100%;border-collapse:collapse;font-size:.78rem;min-width:1100px;}
-th{background:rgba(249,115,22,.1);padding:.6rem .8rem;text-align:left;font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:.68rem;color:var(--ac2);border-bottom:1px solid var(--border);white-space:nowrap;cursor:pointer;user-select:none;}
-th:hover{color:#fff;}
-td{padding:.55rem .8rem;border-bottom:1px solid rgba(255,255,255,.04);color:#ddd;vertical-align:middle;}
-tr:last-child td{border-bottom:none;}
-tr:hover td{background:rgba(255,255,255,.03);}
-td a{color:var(--ac2);text-decoration:none;font-size:.73rem;}
-td a:hover{text-decoration:underline;}
-.badge{display:inline-block;padding:.18rem .6rem;border-radius:100px;font-size:.7rem;font-weight:600;white-space:nowrap;}
-.b-b{background:rgba(251,146,60,.12);color:#fb923c;}
-.b-d{background:rgba(96,165,250,.12);color:#60a5fa;}
-.b-e{background:rgba(74,222,128,.12);color:#4ade80;}
-.b-h{background:rgba(167,139,250,.12);color:#a78bfa;}
-.b-g{background:rgba(250,204,21,.12);color:#facc15;}
-.b-x{background:rgba(255,255,255,.06);color:#a0a0a0;}
-.dtp-yes{background:rgba(248,113,113,.12);color:#f87171;font-weight:700;}
-.dtp-no{background:rgba(74,222,128,.1);color:#4ade80;font-weight:600;}
-.active-yes{color:var(--green);}
-.active-no{color:var(--red);}
-.photos-cell{display:flex;gap:4px;flex-wrap:wrap;max-width:200px;}
-.thumb{width:36px;height:36px;object-fit:cover;border-radius:4px;cursor:pointer;border:1px solid var(--border);transition:transform .2s;}
-.thumb:hover{transform:scale(1.2);}
-.photos-count{font-size:.7rem;color:var(--muted);white-space:nowrap;}
+.table-container { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; min-width: 900px; font-size: 13px; }
+th {
+  text-align: left; padding: 12px 16px; color: var(--text-muted); font-weight: 600;
+  border-bottom: 1px solid var(--border); cursor: pointer; user-select: none; white-space: nowrap;
+}
+th:hover { color: var(--text); }
+td { padding: 14px 16px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(134, 134, 139, 0.05); }
 
-/* Filter bar */
-.filter-bar{display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:1rem;align-items:center;}
-.filter-bar input{background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;padding:.5rem .9rem;color:#fff;font-family:var(--font);font-size:.82rem;outline:none;transition:border-color .3s;width:220px;}
-.filter-bar input:focus{border-color:var(--ac);}
-.fbtn{padding:.45rem 1rem;border-radius:8px;font-family:var(--font);font-size:.78rem;font-weight:600;cursor:pointer;background:transparent;border:1px solid var(--border);color:var(--muted);transition:all .2s;}
-.fbtn.active,.fbtn:hover{border-color:var(--ac2);color:var(--ac2);}
-.fbtn.active{background:rgba(249,115,22,.1);}
+/* Badges */
+.badge { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+.b-dtp { background: rgba(255, 59, 48, 0.15); color: var(--red); }
+.b-nodtp { background: rgba(52, 199, 89, 0.15); color: var(--green); }
+.b-f-Бензин { background: rgba(255, 149, 0, 0.15); color: var(--orange); }
+.b-f-Дизель { background: rgba(0, 113, 227, 0.15); color: var(--ac); }
+.b-f-Електро { background: rgba(175, 82, 222, 0.15); color: var(--purple); }
+.b-f-Гібрид { background: rgba(52, 199, 89, 0.15); color: var(--green); }
+.b-active { color: var(--green); font-weight: 500; }
+.b-inactive { color: var(--red); font-weight: 500; }
+
+.price-col { font-weight: 700; font-size: 14px; }
+.photos-wrap { display: flex; gap: 4px; max-width: 140px; overflow: hidden; }
+.photos-wrap img { width: 32px; height: 32px; border-radius: 6px; object-fit: cover; cursor: pointer; border: 1px solid var(--border); }
+
+/* Progress bar */
+.progress-container { display: none; margin-bottom: 24px; }
+.progress-bg { height: 8px; background: rgba(134,134,139,0.2); border-radius: 4px; overflow: hidden; }
+.progress-bar { height: 100%; background: var(--ac); width: 0%; transition: width 0.3s; }
+.log-box { font-family: monospace; font-size: 11px; color: var(--text-muted); max-height: 100px; overflow-y: auto; margin-top: 8px; }
 
 /* Modal */
-.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:1000;display:none;align-items:center;justify-content:center;padding:1rem;}
-.modal-bg.open{display:flex;}
-.modal{background:#111;border:1px solid var(--border);border-radius:20px;max-width:900px;width:100%;max-height:90vh;overflow-y:auto;padding:2rem;}
-.modal h2{font-size:1.3rem;font-weight:800;margin-bottom:1.25rem;}
-.photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:.75rem;}
-.photo-grid img{width:100%;border-radius:8px;cursor:pointer;transition:transform .2s;}
-.photo-grid img:hover{transform:scale(1.03);}
-.modal-close{float:right;background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:.4rem .9rem;cursor:pointer;font-family:var(--font);margin-top:-.5rem;}
-
-/* Last-updated bar */
-.last-updated{font-size:.75rem;color:var(--muted);margin-top:.5rem;}
-
-@media(max-width:768px){.stats{grid-template-columns:repeat(3,1fr)}.btn-row{flex-direction:column}}
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px);
+  z-index: 1000; display: none; align-items: center; justify-content: center; padding: 2rem;
+}
+.modal-overlay.open { display: flex; }
+.modal-content {
+  background: var(--panel-solid); border-radius: var(--radius); max-width: 900px; width: 100%;
+  max-height: 90vh; overflow-y: auto; padding: 24px; position: relative;
+}
+.close-modal {
+  position: absolute; top: 16px; right: 16px; background: rgba(134,134,139,0.2); border-radius: 50%;
+  width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer;
+}
+.photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-top: 24px; }
+.photo-grid img { width: 100%; border-radius: 12px; aspect-ratio: 4/3; object-fit: cover; cursor: pointer; }
 </style>
 </head>
 <body>
-<div class="glow g1"></div><div class="glow g2"></div>
-<div class="wrap">
+<div class="bg-shape s1"></div><div class="bg-shape s2"></div>
 
-<header>
-  <div class="logo">PRIME <span>AUTO</span> <span style="font-size:.75rem;font-weight:400;color:var(--muted);letter-spacing:.05em">/ Панель керування</span></div>
-  <div class="header-right">
-    <span class="badge-info" id="lastSync">Ще не синхронізовано</span>
-    <button class="btn btn-primary" id="btnScrape" onclick="startScrape()">⚡ Оновити каталог</button>
+<div class="container">
+  <div class="header">
+    <div class="title">
+      <h1>Аналітика PRIME AUTO</h1>
+      <p id="lastSyncTxt">Останнє оновлення: —</p>
+    </div>
+    <div class="actions">
+      <button class="btn btn-secondary" onclick="exportData('xlsx')">↓ Excel</button>
+      <button class="btn btn-secondary" onclick="exportData('js')">↓ JS Каталог</button>
+      <button class="btn btn-primary" id="btnUpdate" onclick="runScrape()">Оновити дані</button>
+    </div>
   </div>
-</header>
 
-<!-- Stats -->
-<div class="stats" id="statsRow">
-  <div class="stat"><div class="stat-n" id="sTotal">—</div><div class="stat-l">Всього авто</div></div>
-  <div class="stat"><div class="stat-n" id="sActive" style="color:var(--green)">—</div><div class="stat-l">Активних</div></div>
-  <div class="stat"><div class="stat-n" id="sDtp" style="color:var(--red)">—</div><div class="stat-l">Були в ДТП</div></div>
-  <div class="stat"><div class="stat-n" id="sPriceAvg">—</div><div class="stat-l">Середня ціна</div></div>
-  <div class="stat"><div class="stat-n" id="sPhotos" style="color:var(--blue)">—</div><div class="stat-l">Фото загалом</div></div>
+  <div class="progress-container" id="progCont">
+    <div class="progress-bg"><div class="progress-bar" id="progBar"></div></div>
+    <div class="log-box" id="progLog"></div>
+  </div>
+
+  <div class="grid-layout">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="card">
+        <h3>Продавці (ID або URL)</h3>
+        <div class="seller-input">
+          <input type="text" id="sellerInput" class="input" placeholder="URL з auto.ria або ID">
+          <button class="btn btn-primary" onclick="addSeller()">+</button>
+        </div>
+        <div class="seller-list" id="sellerList"></div>
+      </div>
+
+      <div class="card">
+        <h3>Фільтри</h3>
+        <div class="filters-wrap">
+          <div>
+            <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px">Паливо:</div>
+            <div class="filter-group" id="fuelFilters">
+              <button class="f-btn" data-type="fuel" data-val="Бензин">Бензин</button>
+              <button class="f-btn" data-type="fuel" data-val="Дизель">Дизель</button>
+              <button class="f-btn" data-type="fuel" data-val="Електро">Електро</button>
+              <button class="f-btn" data-type="fuel" data-val="Гібрид">Гібрид</button>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px">Стан:</div>
+            <div class="filter-group" id="dtpFilters">
+              <button class="f-btn" data-type="dtp" data-val="Не ДТП">Без ДТП</button>
+              <button class="f-btn" data-type="dtp" data-val="Був в ДТП">Був в ДТП</button>
+            </div>
+          </div>
+          <button class="f-btn f-reset" onclick="resetFilters()">Скинути всі фільтри</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <div class="card" style="padding: 16px;">
+        <div class="analytics">
+          <div class="stat-box">
+            <div class="stat-lbl">Всього авто</div>
+            <div class="stat-val" id="statCount">0</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-lbl">Сумарна вартість</div>
+            <div class="stat-val" id="statTotalVal" style="color:var(--green)">$0</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-lbl">Середня ціна</div>
+            <div class="stat-val" id="statAvg">$0</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-lbl">Найдорожче авто</div>
+            <div class="stat-val" id="statMax" style="font-size:18px;margin-bottom:2px">$0</div>
+            <div class="stat-sub" id="statMaxN">—</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-lbl">Найдешевше авто</div>
+            <div class="stat-val" id="statMin" style="font-size:18px;margin-bottom:2px">$0</div>
+            <div class="stat-sub" id="statMinN">—</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th onclick="setSort('i')">#</th>
+                <th onclick="setSort('name_en')">Модель</th>
+                <th onclick="setSort('year')">Рік</th>
+                <th onclick="setSort('price')">Ціна</th>
+                <th onclick="setSort('fuel')">Паливо</th>
+                <th>ДТП</th>
+                <th>Пробіг</th>
+                <th>Фото</th>
+                <th>Статус</th>
+              </tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
-<!-- Progress (hidden by default) -->
-<div class="card" id="progCard" style="display:none">
-  <div class="card-title">⏳ Збір даних...</div>
-  <div class="prog-bar-bg"><div class="prog-bar" id="progBar"></div></div>
-  <div class="prog-log" id="progLog"></div>
-</div>
-
-<!-- Controls -->
-<div class="card" id="resultsCard" style="display:none">
-  <div class="card-title">📋 Каталог авто</div>
-
-  <div class="btn-row">
-    <button class="btn btn-green"  onclick="dlXLSX()">📊 Excel (.xlsx)</button>
-    <button class="btn btn-purple" onclick="dlCSV()">📋 CSV (.csv)</button>
-    <button class="btn btn-blue"   onclick="dlJS()">📄 JS масив</button>
-    <button class="btn btn-ghost"  onclick="dlJSON()">{ } JSON</button>
-  </div>
-
-  <div class="filter-bar">
-    <input type="text" id="searchInput" placeholder="🔍 Пошук по назві..." oninput="filterTable()">
-    <button class="fbtn active" data-f="all"       onclick="setFuel(this)">Всі</button>
-    <button class="fbtn"        data-f="Бензин"    onclick="setFuel(this)">Бензин</button>
-    <button class="fbtn"        data-f="Дизель"    onclick="setFuel(this)">Дизель</button>
-    <button class="fbtn"        data-f="Електро"   onclick="setFuel(this)">Електро</button>
-    <button class="fbtn"        data-f="Гібрид"    onclick="setFuel(this)">Гібрид</button>
-    <button class="fbtn"        data-f="dtp"       onclick="setFuel(this)">⚠ ДТП</button>
-    <button class="fbtn"        data-f="nodtp"     onclick="setFuel(this)">✓ Не ДТП</button>
-  </div>
-
-  <div class="tbl-wrap">
-    <table id="mainTable">
-      <thead>
-        <tr>
-          <th onclick="sortBy('i')">#</th>
-          <th onclick="sortBy('name_en')">Назва (EN)</th>
-          <th onclick="sortBy('year')">Рік</th>
-          <th onclick="sortBy('fuel')">Паливо</th>
-          <th onclick="sortBy('mileage')">Пробіг</th>
-          <th onclick="sortBy('price')">Ціна $</th>
-          <th onclick="sortBy('dtp')">ДТП</th>
-          <th>Статус</th>
-          <th>Фото</th>
-          <th>Посилання</th>
-        </tr>
-      </thead>
-      <tbody id="tBody"></tbody>
-    </table>
-  </div>
-  <div class="last-updated" id="lastUpdatedTxt"></div>
-</div>
-
-</div><!-- /wrap -->
-
-<!-- Photo Modal -->
-<div class="modal-bg" id="photoModal" onclick="closeModal(event)">
-  <div class="modal">
-    <button class="modal-close" onclick="document.getElementById('photoModal').classList.remove('open')">✕ Закрити</button>
-    <h2 id="modalTitle">Фотографії</h2>
-    <div class="photo-grid" id="photoGrid"></div>
+<!-- Modal -->
+<div class="modal-overlay" id="modal">
+  <div class="modal-content">
+    <div class="close-modal" onclick="document.getElementById('modal').classList.remove('open')">✕</div>
+    <h3 id="modalTitle" style="font-size:20px;margin-bottom:8px">Фото</h3>
+    <div class="photo-grid" id="modalGrid"></div>
   </div>
 </div>
 
 <script>
+// --- State ---
+let sellers = JSON.parse(localStorage.getItem('pa_sellers') || '["1640523"]');
 let allCars = [];
-let currentFuel = 'all';
-let sortKey = 'i';
+let sortCol = 'i';
 let sortAsc = true;
+let activeFilters = { fuel: new Set(), dtp: new Set() };
+let pollTimer = null;
 
-const FUEL_CLS = {
-  'Бензин':'b-b','Дизель':'b-d','Електро':'b-e',
-  'Гібрид':'b-h','Газ':'b-g'
-};
+// --- Init ---
+renderSellers();
+initFilterEvents();
+checkStatus();
 
-// ── API calls ──────────────────────────────────────────────────────────────
-async function startScrape() {
-  document.getElementById('btnScrape').disabled = true;
-  document.getElementById('progCard').style.display = 'block';
+// --- Sellers Logic ---
+function saveSellers() { localStorage.setItem('pa_sellers', JSON.stringify(sellers)); renderSellers(); }
+function renderSellers() {
+  document.getElementById('sellerList').innerHTML = sellers.map(s => 
+    `<div class="seller-item">ID: ${s} <button class="del-btn" onclick="delSeller('${s}')">✕</button></div>`
+  ).join('');
+}
+function addSeller() {
+  const inp = document.getElementById('sellerInput');
+  let val = inp.value.trim();
+  if(!val) return;
+  // Try extract ID from URL
+  const m = val.match(/(?:user_id=|dealers\/[^\/]+\/|cabinet\/)(\d+)/);
+  if(m) val = m[1];
+  else val = val.replace(/\D/g, ''); // just digits if raw input
+  
+  if(val && !sellers.includes(val)) {
+    sellers.push(val);
+    saveSellers();
+  }
+  inp.value = '';
+}
+function delSeller(id) {
+  if(sellers.length === 1) return alert('Повинен бути хоча б один продавець!');
+  sellers = sellers.filter(s => s !== id);
+  saveSellers();
+}
+
+// --- Scrape API ---
+async function runScrape() {
+  const btn = document.getElementById('btnUpdate');
+  btn.disabled = true; btn.textContent = 'Запуск...';
+  document.getElementById('progCont').style.display = 'block';
   document.getElementById('progLog').innerHTML = '';
   document.getElementById('progBar').style.width = '0%';
 
-  await fetch('/api/scrape', {method:'POST'});
-  pollStatus();
-}
-
-let pollTimer = null;
-function pollStatus() {
-  if (pollTimer) clearInterval(pollTimer);
-  pollTimer = setInterval(async () => {
-    const r = await fetch('/api/status');
-    const d = await r.json();
-
-    document.getElementById('progBar').style.width = d.progress + '%';
-
-    const log = document.getElementById('progLog');
-    log.innerHTML = d.log.slice(-60).map(l => {
-      const cls = l.level === 'ok' ? 'lok' : l.level === 'error' ? 'lerr' : 'linfo';
-      return `<div class="ll ${cls}">${l.msg}</div>`;
-    }).join('');
-    log.scrollTop = log.scrollHeight;
-
-    if (!d.running) {
-      clearInterval(pollTimer);
-      document.getElementById('btnScrape').disabled = false;
-      if (d.has_result) loadCatalog();
-    }
-  }, 1200);
-}
-
-async function loadCatalog() {
   try {
-    const r = await fetch('/api/catalog');
-    if (!r.ok) return;
-    const data = await r.json();
-    allCars = (data.cars || []).map((c, i) => ({...c, i: i+1}));
-    updateStats(data);
+    await fetch('/api/scrape', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user_ids: sellers })
+    });
+    checkStatus();
+  } catch(e) {
+    alert('Помилка запуску'); btn.disabled = false;
+  }
+}
+
+function checkStatus() {
+  if(pollTimer) clearInterval(pollTimer);
+  pollTimer = setInterval(async () => {
+    try {
+      const res = await fetch('/api/status');
+      const d = await res.json();
+      
+      document.getElementById('progBar').style.width = d.progress + '%';
+      const logBox = document.getElementById('progLog');
+      logBox.innerHTML = d.log.slice(-10).map(l => `<div>[${l.t.split('T')[1].slice(0,8)}] ${l.msg}</div>`).join('');
+      logBox.scrollTop = logBox.scrollHeight;
+
+      if(!d.running) {
+        clearInterval(pollTimer);
+        document.getElementById('btnUpdate').disabled = false;
+        document.getElementById('btnUpdate').textContent = 'Оновити дані';
+        if(d.has_result) loadData();
+      }
+    } catch(e){}
+  }, 1500);
+}
+
+async function loadData() {
+  try {
+    const res = await fetch('/api/catalog');
+    if(!res.ok) return;
+    const data = await res.json();
+    allCars = (data.cars || []).map((c,i) => ({...c, i: i+1}));
+    document.getElementById('lastSyncTxt').textContent = 'Останнє оновлення: ' + new Date(data.scraped_at+'Z').toLocaleString('uk');
+    document.getElementById('progCont').style.display = 'none';
     renderTable();
-    document.getElementById('progCard').style.display = 'none';
-    document.getElementById('resultsCard').style.display = 'block';
-    const d = new Date(data.scraped_at + 'Z');
-    document.getElementById('lastSync').textContent = 'Оновлено: ' + d.toLocaleString('uk');
-    document.getElementById('lastUpdatedTxt').textContent = 'Дата збору: ' + d.toLocaleString('uk');
-  } catch(e) { console.error(e); }
+  } catch(e) {}
 }
 
-// ── Stats ──────────────────────────────────────────────────────────────────
-function updateStats(data) {
-  const cars = data.cars || [];
-  document.getElementById('sTotal').textContent = data.total || cars.length;
-  document.getElementById('sActive').textContent = data.active ?? '—';
-  document.getElementById('sDtp').textContent = cars.filter(c => c.dtp === 'Був в ДТП').length;
-  document.getElementById('sPhotos').textContent = cars.reduce((s,c) => s + (c.photos||[]).length, 0);
-  const prices = cars.map(c => {
-    const m = String(c.price||'').replace(/\D/g,'');
-    return m ? parseInt(m) : 0;
-  }).filter(Boolean);
-  const avg = prices.length ? Math.round(prices.reduce((a,b)=>a+b,0)/prices.length) : 0;
-  document.getElementById('sPriceAvg').textContent = avg ? '$'+avg.toLocaleString('uk') : '—';
-}
-
-// ── Table ──────────────────────────────────────────────────────────────────
-function getFiltered() {
-  const q = document.getElementById('searchInput').value.toLowerCase();
-  return allCars.filter(c => {
-    const name = (c.name_en + ' ' + c.name_ua).toLowerCase();
-    if (q && !name.includes(q)) return false;
-    if (currentFuel === 'dtp')   return c.dtp === 'Був в ДТП';
-    if (currentFuel === 'nodtp') return c.dtp !== 'Був в ДТП';
-    if (currentFuel !== 'all')   return c.fuel === currentFuel;
-    return true;
+// --- Filters & Sorting ---
+function initFilterEvents() {
+  document.querySelectorAll('.f-btn[data-type]').forEach(b => {
+    b.addEventListener('click', () => {
+      b.classList.toggle('active');
+      const type = b.dataset.type;
+      const val = b.dataset.val;
+      if(b.classList.contains('active')) activeFilters[type].add(val);
+      else activeFilters[type].delete(val);
+      renderTable();
+    });
   });
 }
-
-function sortBy(key) {
-  if (sortKey === key) sortAsc = !sortAsc;
-  else { sortKey = key; sortAsc = true; }
+function resetFilters() {
+  activeFilters.fuel.clear(); activeFilters.dtp.clear();
+  document.querySelectorAll('.f-btn[data-type]').forEach(b => b.classList.remove('active'));
+  renderTable();
+}
+function setSort(col) {
+  if(sortCol === col) sortAsc = !sortAsc;
+  else { sortCol = col; sortAsc = true; }
   renderTable();
 }
 
+// --- Rendering ---
 function renderTable() {
-  let rows = getFiltered();
+  // Apply filters
+  let rows = allCars.filter(c => {
+    const pFuel = activeFilters.fuel.size === 0 || activeFilters.fuel.has(c.fuel);
+    const pDtp = activeFilters.dtp.size === 0 || activeFilters.dtp.has(c.dtp);
+    return pFuel && pDtp;
+  });
+
+  // Calculate Analytics based on visible rows
+  updateAnalytics(rows);
+
+  // Sort
   rows.sort((a,b) => {
-    let va = a[sortKey] ?? '', vb = b[sortKey] ?? '';
-    if (sortKey === 'price') { va=parseInt(String(va).replace(/\D/g,'')||0); vb=parseInt(String(vb).replace(/\D/g,'')||0); }
-    if (sortKey === 'year')  { va=parseInt(va)||0; vb=parseInt(vb)||0; }
-    if (va < vb) return sortAsc ? -1 : 1;
-    if (va > vb) return sortAsc ?  1 : -1;
+    let va = a[sortCol], vb = b[sortCol];
+    if(sortCol === 'price') { va = parseInt(String(va).replace(/\D/g,'')||0); vb = parseInt(String(vb).replace(/\D/g,'')||0); }
+    if(sortCol === 'year') { va = parseInt(va)||0; vb = parseInt(vb)||0; }
+    if(va < vb) return sortAsc ? -1 : 1;
+    if(va > vb) return sortAsc ? 1 : -1;
     return 0;
   });
 
-  document.getElementById('tBody').innerHTML = rows.map((c,idx) => {
-    const fc = FUEL_CLS[c.fuel] || 'b-x';
-    const dtpCls = c.dtp === 'Був в ДТП' ? 'dtp-yes' : 'dtp-no';
-    const actCls = c.active !== false ? 'active-yes' : 'active-no';
-    const actTxt = c.active !== false ? '● Активне' : '✕ Знято';
-    const ph = (c.photos||[]).slice(0,3);
-    const thumbs = ph.map(u=>`<img class="thumb" src="${u}" loading="lazy" onclick="openPhotos(${c.i-1})" title="Фото">`).join('');
-    const cnt = (c.photos||[]).length > 3 ? `<span class="photos-count">+${(c.photos||[]).length-3}</span>` : '';
-    return `<tr>
-      <td style="color:var(--muted)">${idx+1}</td>
-      <td><strong>${c.name_en||'—'}</strong>${c.name_ua?`<div style="font-size:.7rem;color:var(--muted)">${c.name_ua}</div>`:''}</td>
-      <td style="font-weight:700;color:var(--ac2)">${c.year||'—'}</td>
-      <td><span class="badge ${fc}">${c.fuel||'—'}</span></td>
-      <td style="color:var(--muted)">${c.mileage||'—'}</td>
-      <td style="font-weight:700;color:var(--green)">${c.price||'—'}</td>
-      <td><span class="badge ${dtpCls}">${c.dtp||'—'}</span></td>
-      <td class="${actCls}" style="font-size:.75rem">${actTxt}</td>
-      <td><div class="photos-cell">${thumbs}${cnt}</div></td>
-      <td><a href="${c.url}" target="_blank">↗ ria.com</a></td>
-    </tr>`;
+  document.getElementById('tbody').innerHTML = rows.map((c, idx) => {
+    const dtpCls = c.dtp === 'Був в ДТП' ? 'b-dtp' : 'b-nodtp';
+    const fuelCls = `b-f-${c.fuel}`;
+    const ph = (c.photos||[]).slice(0,3).map(u => `<img src="${u}" onclick="openGallery(${c.i-1})">`).join('');
+    return `
+      <tr>
+        <td style="color:var(--text-muted)">${idx+1}</td>
+        <td>
+          <div style="font-weight:600">${c.name_en}</div>
+          <div style="font-size:11px;color:var(--text-muted)"><a href="${c.url}" target="_blank">↗ auto.ria</a></div>
+        </td>
+        <td>${c.year}</td>
+        <td class="price-col">${c.price}</td>
+        <td><span class="badge ${fuelCls}">${c.fuel}</span></td>
+        <td><span class="badge ${dtpCls}">${c.dtp}</span></td>
+        <td style="color:var(--text-muted)">${c.mileage}</td>
+        <td><div class="photos-wrap">${ph}</div></td>
+        <td class="${c.active!==false ? 'b-active' : 'b-inactive'}">${c.active!==false ? 'Активне' : 'Знято'}</td>
+      </tr>
+    `;
   }).join('');
 }
 
-function filterTable() { renderTable(); }
-function setFuel(btn) {
-  document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  currentFuel = btn.dataset.f;
-  renderTable();
+function updateAnalytics(rows) {
+  document.getElementById('statCount').textContent = rows.length;
+  
+  let prices = rows.map(c => ({ p: parseInt(String(c.price).replace(/\D/g,'')||0), n: c.name_en })).filter(x => x.p > 0);
+  if(prices.length === 0) {
+    document.getElementById('statTotalVal').textContent = '$0';
+    document.getElementById('statAvg').textContent = '$0';
+    document.getElementById('statMax').textContent = '$0';
+    document.getElementById('statMin').textContent = '$0';
+    document.getElementById('statMaxN').textContent = '—';
+    document.getElementById('statMinN').textContent = '—';
+    return;
+  }
+  
+  prices.sort((a,b) => a.p - b.p);
+  const sum = prices.reduce((a,b)=>a+b.p, 0);
+  const avg = Math.round(sum / prices.length);
+  const min = prices[0];
+  const max = prices[prices.length-1];
+
+  document.getElementById('statTotalVal').textContent = '$' + sum.toLocaleString('uk');
+  document.getElementById('statAvg').textContent = '$' + avg.toLocaleString('uk');
+  document.getElementById('statMax').textContent = '$' + max.p.toLocaleString('uk');
+  document.getElementById('statMaxN').textContent = max.n;
+  document.getElementById('statMin').textContent = '$' + min.p.toLocaleString('uk');
+  document.getElementById('statMinN').textContent = min.n;
 }
 
-// ── Photo modal ────────────────────────────────────────────────────────────
-function openPhotos(idx) {
-  const car = allCars[idx];
-  if (!car) return;
-  document.getElementById('modalTitle').textContent = `${car.name_en} ${car.year} — ${(car.photos||[]).length} фото`;
-  document.getElementById('photoGrid').innerHTML = (car.photos||[]).map(u=>
-    `<img src="${u}" loading="lazy" onclick="window.open('${u}','_blank')" title="Відкрити оригінал">`
-  ).join('');
-  document.getElementById('photoModal').classList.add('open');
-}
-function closeModal(e) {
-  if (e.target.id==='photoModal') document.getElementById('photoModal').classList.remove('open');
+// --- Gallery ---
+function openGallery(idx) {
+  const c = allCars[idx];
+  if(!c || !c.photos) return;
+  document.getElementById('modalTitle').textContent = c.name_en;
+  document.getElementById('modalGrid').innerHTML = c.photos.map(u => `<img src="${u}" onclick="window.open('${u}','_blank')">`).join('');
+  document.getElementById('modal').classList.add('open');
 }
 
-// ── Downloads ──────────────────────────────────────────────────────────────
-function dlXLSX() {
-  if (!allCars.length) return;
-  const rows = [['#','Назва (EN)','Назва (UA)','Рік','Паливо','Пробіг','КПП','Ціна $','ДТП','Статус','Посилання','Фото (URLs)']];
-  allCars.forEach((c,i) => rows.push([
-    i+1, c.name_en, c.name_ua, c.year, c.fuel, c.mileage,
-    c.transmission||'—', c.price, c.dtp,
-    c.active!==false?'Активне':'Знято',
-    c.url, (c.photos||[]).join(' | ')
-  ]));
-  const wb = XLSX.utils.book_new();
-  const ws = XLSX.utils.aoa_to_sheet(rows);
-  ws['!cols']=[{wch:4},{wch:28},{wch:28},{wch:6},{wch:10},{wch:14},{wch:11},{wch:12},{wch:12},{wch:10},{wch:55},{wch:200}];
-  XLSX.utils.book_append_sheet(wb, ws, 'PRIME AUTO');
-  XLSX.writeFile(wb, 'prime-auto-catalog.xlsx');
+// --- Export ---
+function exportData(type) {
+  if(!allCars.length) return alert('Немає даних для експорту');
+  if(type === 'js') {
+    const arr = allCars.filter(c=>c.active!==false).map(c=>({n:c.name_en, ua:c.name_ua, y:c.year, f:c.fuel, m:c.mileage, p:c.price, t:c.transmission, dtp:c.dtp, u:c.url, photos:c.photos||[]}));
+    const text = 'const CATALOG = { cars: ' + JSON.stringify(arr, null, 2) + ' };\n';
+    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text],{type:'text/javascript'}));
+    a.download = 'cars.js'; a.click();
+  } else if (type === 'xlsx') {
+    const rows = [['#','Model EN','Year','Fuel','Mileage','Price','DTP','Status','URL','Photos']];
+    allCars.forEach((c,i) => rows.push([i+1, c.name_en, c.year, c.fuel, c.mileage, c.price, c.dtp, c.active!==false?'Active':'Inactive', c.url, (c.photos||[]).join(' | ')]));
+    const wb = XLSX.utils.book_new(); const ws = XLSX.utils.aoa_to_sheet(rows);
+    XLSX.utils.book_append_sheet(wb, ws, 'Catalog'); XLSX.writeFile(wb, 'catalog.xlsx');
+  }
 }
-function dlCSV() {
-  if (!allCars.length) return;
-  const rows = [['#','Name EN','Name UA','Year','Fuel','Mileage','Trans','Price','DTP','Active','URL','Photos'],...allCars.map((c,i)=>[i+1,c.name_en,c.name_ua,c.year,c.fuel,c.mileage,c.transmission,c.price,c.dtp,c.active!==false?'Yes':'No',c.url,(c.photos||[]).join(';')])];
-  const csv = rows.map(r=>r.map(v=>'"'+String(v||'').replace(/"/g,'""')+'"').join(',')).join('\n');
-  _dl('\ufeff'+csv,'prime-auto-catalog.csv','text/csv;charset=utf-8');
-}
-function dlJS() {
-  if (!allCars.length) return;
-  const arr = allCars.map(c=>({n:c.name_en,y:c.year,f:c.fuel,m:c.mileage,p:c.price,dtp:c.dtp,u:c.url,photos:c.photos||[]}));
-  _dl('// PRIME AUTO Catalog\nconst CARS = '+JSON.stringify(arr,null,2)+';\n','prime-auto-cars.js','text/javascript');
-}
-function dlJSON() {
-  fetch('/api/catalog').then(r=>r.blob()).then(b=>{const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='prime-auto-catalog.json';a.click();});
-}
-function _dl(content, name, type) {
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob([content],{type}));
-  a.download=name;a.click();
-}
-
-// ── Init ───────────────────────────────────────────────────────────────────
-(async()=>{
-  const st = await fetch('/api/status').then(r=>r.json()).catch(()=>({}));
-  if (st.has_result) { await loadCatalog(); }
-  if (st.running) { document.getElementById('progCard').style.display='block'; pollStatus(); }
-})();
 </script>
 </body>
 </html>

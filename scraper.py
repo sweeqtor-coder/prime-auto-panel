@@ -12,9 +12,7 @@ from datetime import datetime
 
 log = logging.getLogger(__name__)
 
-USER_ID    = "1640523"
-SEARCH_URL = (f"https://auto.ria.com/uk/search/"
-              f"?category_id=1&user_id={USER_ID}&countpage=100&page=0")
+
 DELAY      = 0.6
 
 FUEL_MAP = [
@@ -114,19 +112,22 @@ def get_session() -> requests.Session:
     })
     return s
 
-def fetch_car_urls(sess: requests.Session) -> list:
-    """Get all car listing URLs for the seller."""
-    try:
-        r = sess.get(SEARCH_URL, timeout=20)
-        r.raise_for_status()
-        urls = list(dict.fromkeys(
-            re.findall(r'"(https://auto\.ria\.com/uk/auto_[^"]+\.html)"', r.text)
-        ))
-        log.info(f"Found {len(urls)} car URLs")
-        return urls
-    except Exception as e:
-        log.error(f"fetch_car_urls error: {e}")
-        return []
+def fetch_car_urls(sess: requests.Session, user_ids: list) -> list:
+    """Get all car listing URLs for the sellers."""
+    all_urls = []
+    for uid in user_ids:
+        search_url = f"https://auto.ria.com/uk/search/?category_id=1&user_id={uid}&countpage=100&page=0"
+        try:
+            r = sess.get(search_url, timeout=20)
+            r.raise_for_status()
+            urls = list(dict.fromkeys(
+                re.findall(r'"(https://auto\.ria\.com/uk/auto_[^"]+\.html)"', r.text)
+            ))
+            all_urls.extend(urls)
+            log.info(f"Found {len(urls)} car URLs for seller {uid}")
+        except Exception as e:
+            log.error(f"fetch_car_urls error for seller {uid}: {e}")
+    return list(dict.fromkeys(all_urls))
 
 def parse_car(sess: requests.Session, url: str) -> dict:
     """Parse a single car page. Returns full car dict."""
