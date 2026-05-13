@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PRIME AUTO — Панель керування</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#030303;--panel:rgba(20,20,20,.75);--ac:#F97316;--ac2:#fb923c;--border:rgba(255,255,255,.08);--text:#fff;--muted:#a0a0a0;--green:#4ade80;--blue:#60a5fa;--red:#f87171;--font:'Outfit',sans-serif;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;padding:2rem 1rem;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+.glow{position:fixed;border-radius:50%;pointer-events:none;filter:blur(160px);opacity:.08;}
+.g1{width:600px;height:600px;background:#F97316;top:-200px;left:-200px;}
+.g2{width:400px;height:400px;background:#3b82f6;bottom:-100px;right:-150px;}
+.wrap{max-width:1300px;margin:0 auto;position:relative;z-index:1;}
+header{display:flex;align-items:center;justify-content:space-between;margin-bottom:2.5rem;flex-wrap:wrap;gap:1rem;}
+.logo{font-size:1.2rem;font-weight:900;letter-spacing:.15em;}
+.logo span{background:linear-gradient(135deg,#F97316,#c2410c);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.header-right{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;}
+.badge-info{padding:.35rem .9rem;border-radius:100px;font-size:.78rem;font-weight:600;border:1px solid var(--border);color:var(--muted);}
+.card{background:var(--panel);backdrop-filter:blur(24px);border:1px solid var(--border);border-radius:20px;padding:1.5rem 1.75rem;margin-bottom:1.25rem;}
+.card-title{font-size:.78rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ac2);margin-bottom:1.25rem;}
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:.75rem;margin-bottom:1.5rem;}
+.stat{background:rgba(249,115,22,.07);border:1px solid rgba(249,115,22,.18);border-radius:14px;padding:1rem;text-align:center;}
+.stat-n{font-size:1.9rem;font-weight:900;color:var(--ac);}
+.stat-l{font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-top:.15rem;}
+.btn{padding:.75rem 1.5rem;border-radius:10px;font-family:var(--font);font-size:.88rem;font-weight:700;cursor:pointer;transition:all .3s;border:none;display:inline-flex;align-items:center;gap:.4rem;}
+.btn-primary{background:linear-gradient(135deg,#F97316,#c2410c);color:#fff;}
+.btn-primary:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 12px 32px rgba(249,115,22,.35);}
+.btn-primary:disabled{opacity:.45;cursor:not-allowed;}
+.btn-green{background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;}
+.btn-green:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(22,163,74,.3);}
+.btn-blue{background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;}
+.btn-blue:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(37,99,235,.3);}
+.btn-purple{background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;}
+.btn-purple:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(124,58,237,.3);}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--muted);}
+.btn-ghost:hover{border-color:var(--ac2);color:var(--ac2);}
+.btn-row{display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:1.5rem;}
+.prog-bar-bg{background:rgba(255,255,255,.06);border-radius:100px;height:8px;overflow:hidden;margin-bottom:1rem;}
+.prog-bar{height:100%;background:linear-gradient(90deg,#F97316,#c2410c);width:0%;transition:width .4s ease;border-radius:100px;}
+.prog-log{font-size:.78rem;color:var(--muted);max-height:200px;overflow-y:auto;display:flex;flex-direction:column;gap:.2rem;}
+.ll{padding:.2rem .6rem;border-radius:6px;font-family:monospace;}
+.lok{color:var(--green);}.lerr{color:var(--red);}.linfo{color:var(--ac2);}
+
+/* Table */
+.tbl-wrap{overflow-x:auto;border-radius:14px;border:1px solid var(--border);margin-top:.5rem;}
+table{width:100%;border-collapse:collapse;font-size:.78rem;min-width:1100px;}
+th{background:rgba(249,115,22,.1);padding:.6rem .8rem;text-align:left;font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:.68rem;color:var(--ac2);border-bottom:1px solid var(--border);white-space:nowrap;cursor:pointer;user-select:none;}
+th:hover{color:#fff;}
+td{padding:.55rem .8rem;border-bottom:1px solid rgba(255,255,255,.04);color:#ddd;vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(255,255,255,.03);}
+td a{color:var(--ac2);text-decoration:none;font-size:.73rem;}
+td a:hover{text-decoration:underline;}
+.badge{display:inline-block;padding:.18rem .6rem;border-radius:100px;font-size:.7rem;font-weight:600;white-space:nowrap;}
+.b-b{background:rgba(251,146,60,.12);color:#fb923c;}
+.b-d{background:rgba(96,165,250,.12);color:#60a5fa;}
+.b-e{background:rgba(74,222,128,.12);color:#4ade80;}
+.b-h{background:rgba(167,139,250,.12);color:#a78bfa;}
+.b-g{background:rgba(250,204,21,.12);color:#facc15;}
+.b-x{background:rgba(255,255,255,.06);color:#a0a0a0;}
+.dtp-yes{background:rgba(248,113,113,.12);color:#f87171;font-weight:700;}
+.dtp-no{background:rgba(74,222,128,.1);color:#4ade80;font-weight:600;}
+.active-yes{color:var(--green);}
+.active-no{color:var(--red);}
+.photos-cell{display:flex;gap:4px;flex-wrap:wrap;max-width:200px;}
+.thumb{width:36px;height:36px;object-fit:cover;border-radius:4px;cursor:pointer;border:1px solid var(--border);transition:transform .2s;}
+.thumb:hover{transform:scale(1.2);}
+.photos-count{font-size:.7rem;color:var(--muted);white-space:nowrap;}
+
+/* Filter bar */
+.filter-bar{display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:1rem;align-items:center;}
+.filter-bar input{background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;padding:.5rem .9rem;color:#fff;font-family:var(--font);font-size:.82rem;outline:none;transition:border-color .3s;width:220px;}
+.filter-bar input:focus{border-color:var(--ac);}
+.fbtn{padding:.45rem 1rem;border-radius:8px;font-family:var(--font);font-size:.78rem;font-weight:600;cursor:pointer;background:transparent;border:1px solid var(--border);color:var(--muted);transition:all .2s;}
+.fbtn.active,.fbtn:hover{border-color:var(--ac2);color:var(--ac2);}
+.fbtn.active{background:rgba(249,115,22,.1);}
+
+/* Modal */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:1000;display:none;align-items:center;justify-content:center;padding:1rem;}
+.modal-bg.open{display:flex;}
+.modal{background:#111;border:1px solid var(--border);border-radius:20px;max-width:900px;width:100%;max-height:90vh;overflow-y:auto;padding:2rem;}
+.modal h2{font-size:1.3rem;font-weight:800;margin-bottom:1.25rem;}
+.photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:.75rem;}
+.photo-grid img{width:100%;border-radius:8px;cursor:pointer;transition:transform .2s;}
+.photo-grid img:hover{transform:scale(1.03);}
+.modal-close{float:right;background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:.4rem .9rem;cursor:pointer;font-family:var(--font);margin-top:-.5rem;}
+
+/* Last-updated bar */
+.last-updated{font-size:.75rem;color:var(--muted);margin-top:.5rem;}
+
+@media(max-width:768px){.stats{grid-template-columns:repeat(3,1fr)}.btn-row{flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="glow g1"></div><div class="glow g2"></div>
+<div class="wrap">
+
+<header>
+  <div class="logo">PRIME <span>AUTO</span> <span style="font-size:.75rem;font-weight:400;color:var(--muted);letter-spacing:.05em">/ Панель керування</span></div>
+  <div class="header-right">
+    <span class="badge-info" id="lastSync">Ще не синхронізовано</span>
+    <button class="btn btn-primary" id="btnScrape" onclick="startScrape()">⚡ Оновити каталог</button>
+  </div>
+</header>
+
+<!-- Stats -->
+<div class="stats" id="statsRow">
+  <div class="stat"><div class="stat-n" id="sTotal">—</div><div class="stat-l">Всього авто</div></div>
+  <div class="stat"><div class="stat-n" id="sActive" style="color:var(--green)">—</div><div class="stat-l">Активних</div></div>
+  <div class="stat"><div class="stat-n" id="sDtp" style="color:var(--red)">—</div><div class="stat-l">Були в ДТП</div></div>
+  <div class="stat"><div class="stat-n" id="sPriceAvg">—</div><div class="stat-l">Середня ціна</div></div>
+  <div class="stat"><div class="stat-n" id="sPhotos" style="color:var(--blue)">—</div><div class="stat-l">Фото загалом</div></div>
+</div>
+
+<!-- Progress (hidden by default) -->
+<div class="card" id="progCard" style="display:none">
+  <div class="card-title">⏳ Збір даних...</div>
+  <div class="prog-bar-bg"><div class="prog-bar" id="progBar"></div></div>
+  <div class="prog-log" id="progLog"></div>
+</div>
+
+<!-- Controls -->
+<div class="card" id="resultsCard" style="display:none">
+  <div class="card-title">📋 Каталог авто</div>
+
+  <div class="btn-row">
+    <button class="btn btn-green"  onclick="dlXLSX()">📊 Excel (.xlsx)</button>
+    <button class="btn btn-purple" onclick="dlCSV()">📋 CSV (.csv)</button>
+    <button class="btn btn-blue"   onclick="dlJS()">📄 JS масив</button>
+    <button class="btn btn-ghost"  onclick="dlJSON()">{ } JSON</button>
+  </div>
+
+  <div class="filter-bar">
+    <input type="text" id="searchInput" placeholder="🔍 Пошук по назві..." oninput="filterTable()">
+    <button class="fbtn active" data-f="all"       onclick="setFuel(this)">Всі</button>
+    <button class="fbtn"        data-f="Бензин"    onclick="setFuel(this)">Бензин</button>
+    <button class="fbtn"        data-f="Дизель"    onclick="setFuel(this)">Дизель</button>
+    <button class="fbtn"        data-f="Електро"   onclick="setFuel(this)">Електро</button>
+    <button class="fbtn"        data-f="Гібрид"    onclick="setFuel(this)">Гібрид</button>
+    <button class="fbtn"        data-f="dtp"       onclick="setFuel(this)">⚠ ДТП</button>
+    <button class="fbtn"        data-f="nodtp"     onclick="setFuel(this)">✓ Не ДТП</button>
+  </div>
+
+  <div class="tbl-wrap">
+    <table id="mainTable">
+      <thead>
+        <tr>
+          <th onclick="sortBy('i')">#</th>
+          <th onclick="sortBy('name_en')">Назва (EN)</th>
+          <th onclick="sortBy('year')">Рік</th>
+          <th onclick="sortBy('fuel')">Паливо</th>
+          <th onclick="sortBy('mileage')">Пробіг</th>
+          <th onclick="sortBy('price')">Ціна $</th>
+          <th onclick="sortBy('dtp')">ДТП</th>
+          <th>Статус</th>
+          <th>Фото</th>
+          <th>Посилання</th>
+        </tr>
+      </thead>
+      <tbody id="tBody"></tbody>
+    </table>
+  </div>
+  <div class="last-updated" id="lastUpdatedTxt"></div>
+</div>
+
+</div><!-- /wrap -->
+
+<!-- Photo Modal -->
+<div class="modal-bg" id="photoModal" onclick="closeModal(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="document.getElementById('photoModal').classList.remove('open')">✕ Закрити</button>
+    <h2 id="modalTitle">Фотографії</h2>
+    <div class="photo-grid" id="photoGrid"></div>
+  </div>
+</div>
+
+<script>
+let allCars = [];
+let currentFuel = 'all';
+let sortKey = 'i';
+let sortAsc = true;
+
+const FUEL_CLS = {
+  'Бензин':'b-b','Дизель':'b-d','Електро':'b-e',
+  'Гібрид':'b-h','Газ':'b-g'
+};
+
+// ── API calls ──────────────────────────────────────────────────────────────
+async function startScrape() {
+  document.getElementById('btnScrape').disabled = true;
+  document.getElementById('progCard').style.display = 'block';
+  document.getElementById('progLog').innerHTML = '';
+  document.getElementById('progBar').style.width = '0%';
+
+  await fetch('/api/scrape', {method:'POST'});
+  pollStatus();
+}
+
+let pollTimer = null;
+function pollStatus() {
+  if (pollTimer) clearInterval(pollTimer);
+  pollTimer = setInterval(async () => {
+    const r = await fetch('/api/status');
+    const d = await r.json();
+
+    document.getElementById('progBar').style.width = d.progress + '%';
+
+    const log = document.getElementById('progLog');
+    log.innerHTML = d.log.slice(-60).map(l => {
+      const cls = l.level === 'ok' ? 'lok' : l.level === 'error' ? 'lerr' : 'linfo';
+      return `<div class="ll ${cls}">${l.msg}</div>`;
+    }).join('');
+    log.scrollTop = log.scrollHeight;
+
+    if (!d.running) {
+      clearInterval(pollTimer);
+      document.getElementById('btnScrape').disabled = false;
+      if (d.has_result) loadCatalog();
+    }
+  }, 1200);
+}
+
+async function loadCatalog() {
+  try {
+    const r = await fetch('/api/catalog');
+    if (!r.ok) return;
+    const data = await r.json();
+    allCars = (data.cars || []).map((c, i) => ({...c, i: i+1}));
+    updateStats(data);
+    renderTable();
+    document.getElementById('progCard').style.display = 'none';
+    document.getElementById('resultsCard').style.display = 'block';
+    const d = new Date(data.scraped_at + 'Z');
+    document.getElementById('lastSync').textContent = 'Оновлено: ' + d.toLocaleString('uk');
+    document.getElementById('lastUpdatedTxt').textContent = 'Дата збору: ' + d.toLocaleString('uk');
+  } catch(e) { console.error(e); }
+}
+
+// ── Stats ──────────────────────────────────────────────────────────────────
+function updateStats(data) {
+  const cars = data.cars || [];
+  document.getElementById('sTotal').textContent = data.total || cars.length;
+  document.getElementById('sActive').textContent = data.active ?? '—';
+  document.getElementById('sDtp').textContent = cars.filter(c => c.dtp === 'Був в ДТП').length;
+  document.getElementById('sPhotos').textContent = cars.reduce((s,c) => s + (c.photos||[]).length, 0);
+  const prices = cars.map(c => {
+    const m = String(c.price||'').replace(/\D/g,'');
+    return m ? parseInt(m) : 0;
+  }).filter(Boolean);
+  const avg = prices.length ? Math.round(prices.reduce((a,b)=>a+b,0)/prices.length) : 0;
+  document.getElementById('sPriceAvg').textContent = avg ? '$'+avg.toLocaleString('uk') : '—';
+}
+
+// ── Table ──────────────────────────────────────────────────────────────────
+function getFiltered() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  return allCars.filter(c => {
+    const name = (c.name_en + ' ' + c.name_ua).toLowerCase();
+    if (q && !name.includes(q)) return false;
+    if (currentFuel === 'dtp')   return c.dtp === 'Був в ДТП';
+    if (currentFuel === 'nodtp') return c.dtp !== 'Був в ДТП';
+    if (currentFuel !== 'all')   return c.fuel === currentFuel;
+    return true;
+  });
+}
+
+function sortBy(key) {
+  if (sortKey === key) sortAsc = !sortAsc;
+  else { sortKey = key; sortAsc = true; }
+  renderTable();
+}
+
+function renderTable() {
+  let rows = getFiltered();
+  rows.sort((a,b) => {
+    let va = a[sortKey] ?? '', vb = b[sortKey] ?? '';
+    if (sortKey === 'price') { va=parseInt(String(va).replace(/\D/g,'')||0); vb=parseInt(String(vb).replace(/\D/g,'')||0); }
+    if (sortKey === 'year')  { va=parseInt(va)||0; vb=parseInt(vb)||0; }
+    if (va < vb) return sortAsc ? -1 : 1;
+    if (va > vb) return sortAsc ?  1 : -1;
+    return 0;
+  });
+
+  document.getElementById('tBody').innerHTML = rows.map((c,idx) => {
+    const fc = FUEL_CLS[c.fuel] || 'b-x';
+    const dtpCls = c.dtp === 'Був в ДТП' ? 'dtp-yes' : 'dtp-no';
+    const actCls = c.active !== false ? 'active-yes' : 'active-no';
+    const actTxt = c.active !== false ? '● Активне' : '✕ Знято';
+    const ph = (c.photos||[]).slice(0,3);
+    const thumbs = ph.map(u=>`<img class="thumb" src="${u}" loading="lazy" onclick="openPhotos(${c.i-1})" title="Фото">`).join('');
+    const cnt = (c.photos||[]).length > 3 ? `<span class="photos-count">+${(c.photos||[]).length-3}</span>` : '';
+    return `<tr>
+      <td style="color:var(--muted)">${idx+1}</td>
+      <td><strong>${c.name_en||'—'}</strong>${c.name_ua?`<div style="font-size:.7rem;color:var(--muted)">${c.name_ua}</div>`:''}</td>
+      <td style="font-weight:700;color:var(--ac2)">${c.year||'—'}</td>
+      <td><span class="badge ${fc}">${c.fuel||'—'}</span></td>
+      <td style="color:var(--muted)">${c.mileage||'—'}</td>
+      <td style="font-weight:700;color:var(--green)">${c.price||'—'}</td>
+      <td><span class="badge ${dtpCls}">${c.dtp||'—'}</span></td>
+      <td class="${actCls}" style="font-size:.75rem">${actTxt}</td>
+      <td><div class="photos-cell">${thumbs}${cnt}</div></td>
+      <td><a href="${c.url}" target="_blank">↗ ria.com</a></td>
+    </tr>`;
+  }).join('');
+}
+
+function filterTable() { renderTable(); }
+function setFuel(btn) {
+  document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  currentFuel = btn.dataset.f;
+  renderTable();
+}
+
+// ── Photo modal ────────────────────────────────────────────────────────────
+function openPhotos(idx) {
+  const car = allCars[idx];
+  if (!car) return;
+  document.getElementById('modalTitle').textContent = `${car.name_en} ${car.year} — ${(car.photos||[]).length} фото`;
+  document.getElementById('photoGrid').innerHTML = (car.photos||[]).map(u=>
+    `<img src="${u}" loading="lazy" onclick="window.open('${u}','_blank')" title="Відкрити оригінал">`
+  ).join('');
+  document.getElementById('photoModal').classList.add('open');
+}
+function closeModal(e) {
+  if (e.target.id==='photoModal') document.getElementById('photoModal').classList.remove('open');
+}
+
+// ── Downloads ──────────────────────────────────────────────────────────────
+function dlXLSX() {
+  if (!allCars.length) return;
+  const rows = [['#','Назва (EN)','Назва (UA)','Рік','Паливо','Пробіг','КПП','Ціна $','ДТП','Статус','Посилання','Фото (URLs)']];
+  allCars.forEach((c,i) => rows.push([
+    i+1, c.name_en, c.name_ua, c.year, c.fuel, c.mileage,
+    c.transmission||'—', c.price, c.dtp,
+    c.active!==false?'Активне':'Знято',
+    c.url, (c.photos||[]).join(' | ')
+  ]));
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols']=[{wch:4},{wch:28},{wch:28},{wch:6},{wch:10},{wch:14},{wch:11},{wch:12},{wch:12},{wch:10},{wch:55},{wch:200}];
+  XLSX.utils.book_append_sheet(wb, ws, 'PRIME AUTO');
+  XLSX.writeFile(wb, 'prime-auto-catalog.xlsx');
+}
+function dlCSV() {
+  if (!allCars.length) return;
+  const rows = [['#','Name EN','Name UA','Year','Fuel','Mileage','Trans','Price','DTP','Active','URL','Photos'],...allCars.map((c,i)=>[i+1,c.name_en,c.name_ua,c.year,c.fuel,c.mileage,c.transmission,c.price,c.dtp,c.active!==false?'Yes':'No',c.url,(c.photos||[]).join(';')])];
+  const csv = rows.map(r=>r.map(v=>'"'+String(v||'').replace(/"/g,'""')+'"').join(',')).join('\n');
+  _dl('\ufeff'+csv,'prime-auto-catalog.csv','text/csv;charset=utf-8');
+}
+function dlJS() {
+  if (!allCars.length) return;
+  const arr = allCars.map(c=>({n:c.name_en,y:c.year,f:c.fuel,m:c.mileage,p:c.price,dtp:c.dtp,u:c.url,photos:c.photos||[]}));
+  _dl('// PRIME AUTO Catalog\nconst CARS = '+JSON.stringify(arr,null,2)+';\n','prime-auto-cars.js','text/javascript');
+}
+function dlJSON() {
+  fetch('/api/catalog').then(r=>r.blob()).then(b=>{const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='prime-auto-catalog.json';a.click();});
+}
+function _dl(content, name, type) {
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([content],{type}));
+  a.download=name;a.click();
+}
+
+// ── Init ───────────────────────────────────────────────────────────────────
+(async()=>{
+  const st = await fetch('/api/status').then(r=>r.json()).catch(()=>({}));
+  if (st.has_result) { await loadCatalog(); }
+  if (st.running) { document.getElementById('progCard').style.display='block'; pollStatus(); }
+})();
+</script>
+</body>
+</html>
