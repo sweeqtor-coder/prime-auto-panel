@@ -2,174 +2,202 @@
 <html lang="uk">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PRIME AUTO — Аналітика та Керування</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PRIME AUTO — Панель Керування</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-/* Apple-style Dashboard */
+/* Modern Premium Dark Theme */
 :root {
-  --bg: #f5f5f7;
-  --panel: rgba(255, 255, 255, 0.7);
-  --panel-solid: #ffffff;
-  --text: #1d1d1f;
+  --bg: #05050a;
+  --panel: rgba(18, 18, 28, 0.45);
+  --panel-solid: #0d0d16;
+  --panel-border: rgba(255, 255, 255, 0.05);
+  --text: #f5f5f7;
   --text-muted: #86868b;
-  --border: rgba(0, 0, 0, 0.08);
+  --border: rgba(255, 255, 255, 0.06);
   --ac: #0071e3; /* Apple Blue */
-  --ac-hover: #0077ed;
-  --green: #34c759;
-  --red: #ff3b30;
-  --orange: #ff9500;
-  --purple: #af52de;
-  --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  --radius: 16px;
-  --shadow: 0 4px 24px rgba(0,0,0,0.04);
+  --ac-hover: #0a84ff;
+  --green: #30d158; /* Apple green */
+  --red: #ff453a;
+  --orange: #ff9f0a;
+  --purple: #bf5af2;
+  --font: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --radius: 20px;
+  --shadow: 0 12px 40px rgba(0,0,0,0.6);
 }
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #000000;
-    --panel: rgba(28, 28, 30, 0.7);
-    --panel-solid: #1c1c1e;
-    --text: #f5f5f7;
-    --text-muted: #86868b;
-    --border: rgba(255, 255, 255, 0.1);
-    --ac: #0a84ff;
-    --ac-hover: #0071e3;
-    --shadow: 0 4px 24px rgba(0,0,0,0.2);
-  }
-}
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
   font-family: var(--font); background: var(--bg); color: var(--text);
-  min-height: 100vh; padding: 2rem; -webkit-font-smoothing: antialiased;
+  min-height: 100vh; padding: 2.5rem; -webkit-font-smoothing: antialiased;
+  position: relative; overflow-x: hidden;
 }
-/* Blurred background shapes */
-.bg-shape {
-  position: fixed; border-radius: 50%; filter: blur(100px); opacity: 0.15; z-index: -1;
-}
-.s1 { top: -100px; left: -100px; width: 400px; height: 400px; background: var(--ac); }
-.s2 { bottom: -100px; right: -100px; width: 500px; height: 500px; background: var(--purple); }
 
-.container { max-width: 1400px; margin: 0 auto; }
+/* Background gradient blobs */
+.bg-shape {
+  position: fixed; border-radius: 50%; filter: blur(140px); opacity: 0.16; z-index: -1; pointer-events: none;
+}
+.s1 { top: -200px; left: -100px; width: 600px; height: 600px; background: var(--ac); }
+.s2 { bottom: -200px; right: -100px; width: 700px; height: 700px; background: var(--purple); }
+
+.container { max-width: 1600px; margin: 0 auto; }
 
 /* Header */
-.header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem; }
-.title h1 { font-size: 32px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 4px; }
-.title p { color: var(--text-muted); font-size: 14px; }
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem; }
+.title h1 { font-size: 34px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 6px; }
+.title p { color: var(--text-muted); font-size: 14px; font-weight: 500; }
 .actions { display: flex; gap: 12px; align-items: center; }
 
 /* Buttons */
 .btn {
-  padding: 10px 18px; border-radius: 100px; font-family: inherit; font-size: 14px; font-weight: 600;
-  border: none; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px;
+  padding: 11px 22px; border-radius: 100px; font-family: inherit; font-size: 13.5px; font-weight: 600;
+  border: none; cursor: pointer; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); display: inline-flex; align-items: center; gap: 8px;
 }
-.btn-primary { background: var(--ac); color: #fff; }
-.btn-primary:hover:not(:disabled) { background: var(--ac-hover); transform: scale(1.02); }
-.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-.btn-secondary { background: var(--panel-solid); color: var(--text); border: 1px solid var(--border); }
-.btn-secondary:hover { background: var(--border); }
+.btn-primary { background: var(--ac); color: #fff; box-shadow: 0 4px 14px rgba(0, 113, 227, 0.3); }
+.btn-primary:hover:not(:disabled) { background: var(--ac-hover); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0, 113, 227, 0.45); }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.btn-secondary { background: rgba(255,255,255,0.05); color: var(--text); border: 1px solid var(--panel-border); }
+.btn-secondary:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.15); }
 
 /* Layout Grid */
-.grid-layout { display: grid; grid-template-columns: 320px 1fr; gap: 24px; align-items: start; }
-@media (max-width: 1024px) { .grid-layout { grid-template-columns: 1fr; } }
+.grid-layout { display: grid; grid-template-columns: 320px 1fr; gap: 32px; align-items: start; }
+@media (max-width: 1100px) { .grid-layout { grid-template-columns: 1fr; } }
 
 /* Cards */
 .card {
-  background: var(--panel); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
-  border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow);
-  margin-bottom: 24px;
+  background: var(--panel); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+  border: 1px solid var(--panel-border); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow);
+  margin-bottom: 24px; transition: border-color 0.3s;
 }
-.card h3 { font-size: 16px; font-weight: 600; margin-bottom: 16px; color: var(--text); }
+.card:hover { border-color: rgba(255,255,255,0.09); }
+.card h3 { font-size: 15px; font-weight: 700; margin-bottom: 20px; color: var(--text); text-transform: uppercase; letter-spacing: 0.05em; font-size: 12px; color: var(--text-muted); }
 
 /* Sellers List */
-.seller-input { display: flex; gap: 8px; margin-bottom: 16px; }
+.seller-input { display: flex; gap: 10px; margin-bottom: 20px; }
 .input {
-  flex: 1; padding: 10px 16px; border-radius: 12px; border: 1px solid var(--border);
-  background: rgba(255,255,255,0.05); color: var(--text); font-family: inherit; font-size: 14px;
+  flex: 1; padding: 11px 16px; border-radius: 12px; border: 1px solid var(--panel-border);
+  background: rgba(0,0,0,0.3); color: var(--text); font-family: inherit; font-size: 14px; transition: border-color 0.2s;
 }
 .input:focus { outline: none; border-color: var(--ac); }
-.seller-list { display: flex; flex-direction: column; gap: 8px; }
-.seller-item {
-  display: flex; justify-content: space-between; align-items: center; padding: 10px 14px;
-  background: rgba(134, 134, 139, 0.1); border-radius: 10px; font-size: 13px; font-weight: 500;
+.btn-add {
+  background: var(--ac); color: white; border: none; border-radius: 50%; width: 42px; height: 42px;
+  display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; transition: background 0.2s, transform 0.2s;
 }
-.del-btn { color: var(--red); cursor: pointer; background: none; border: none; font-size: 16px; }
+.btn-add:hover { background: var(--ac-hover); transform: scale(1.05); }
+.seller-list { display: flex; flex-direction: column; gap: 10px; }
+.seller-item {
+  display: flex; justify-content: space-between; align-items: center; padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.02); border-radius: 12px; font-size: 13.5px; font-weight: 600;
+}
+.del-btn { color: rgba(255,69,58,0.7); cursor: pointer; background: none; border: none; font-size: 16px; transition: color 0.2s; }
+.del-btn:hover { color: var(--red); }
 
 /* Analytics Grid */
-.analytics { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; }
+.analytics { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
 .stat-box {
-  background: var(--panel-solid); border: 1px solid var(--border); border-radius: 14px; padding: 16px;
-  display: flex; flex-direction: column; justify-content: center;
+  background: rgba(255,255,255,0.02); border: 1px solid var(--panel-border); border-radius: 16px; padding: 20px;
+  display: flex; flex-direction: column; justify-content: center; transition: background 0.3s;
 }
-.stat-val { font-size: 24px; font-weight: 700; margin-bottom: 4px; letter-spacing: -0.02em; }
-.stat-lbl { font-size: 12px; color: var(--text-muted); font-weight: 500; }
-.stat-sub { font-size: 11px; color: var(--text-muted); margin-top: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.stat-box:hover { background: rgba(255,255,255,0.04); }
+.stat-val { font-size: 28px; font-weight: 800; margin-bottom: 6px; letter-spacing: -0.02em; font-family: 'Outfit', sans-serif; }
+.stat-lbl { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+.stat-sub { font-size: 12px; color: var(--text-muted); margin-top: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500; }
 
 /* Filters */
-.filters-wrap { display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px; }
+.filters-wrap { display: flex; flex-direction: column; gap: 20px; }
+.filter-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; }
 .filter-group { display: flex; flex-wrap: wrap; gap: 8px; }
 .f-btn {
-  padding: 8px 16px; border-radius: 10px; border: 1px solid var(--border); background: transparent;
-  color: var(--text); font-size: 13px; font-weight: 500; cursor: pointer; transition: 0.2s;
+  padding: 10px 18px; border-radius: 20px; border: 1px solid var(--panel-border); background: transparent;
+  color: var(--text); font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s;
 }
-.f-btn.active { background: var(--ac); color: #fff; border-color: var(--ac); }
-.f-reset { color: var(--red); border-color: rgba(255,59,48,0.3); }
+.f-btn:hover { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.1); }
+.f-btn.active { background: var(--ac); color: #fff; border-color: var(--ac); box-shadow: 0 0 12px rgba(0, 113, 227, 0.4); }
+.f-reset { color: var(--red); border-color: rgba(255,69,58,0.25); font-weight: 600; text-align: center; justify-content: center; width: 100%; margin-top: 8px; }
+.f-reset:hover { background: rgba(255,69,58,0.08); border-color: var(--red); }
 
 /* Table */
-.table-container { overflow-x: auto; }
-table { width: 100%; border-collapse: collapse; min-width: 900px; font-size: 13px; }
+.table-container { overflow-x: auto; border-radius: 14px; }
+table { width: 100%; border-collapse: collapse; min-width: 900px; font-size: 13.5px; }
 th {
-  text-align: left; padding: 12px 16px; color: var(--text-muted); font-weight: 600;
-  border-bottom: 1px solid var(--border); cursor: pointer; user-select: none; white-space: nowrap;
+  text-align: left; padding: 16px 20px; color: var(--text-muted); font-weight: 700;
+  text-transform: uppercase; font-size: 11px; letter-spacing: 0.06em;
+  border-bottom: 1px solid var(--border); cursor: pointer; user-select: none; transition: color 0.2s;
 }
 th:hover { color: var(--text); }
-td { padding: 14px 16px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+td { padding: 16px 20px; border-bottom: 1px solid var(--border); vertical-align: middle; }
 tr:last-child td { border-bottom: none; }
-tr:hover td { background: rgba(134, 134, 139, 0.05); }
+tr:hover td { background: rgba(255, 255, 255, 0.02); }
 
 /* Badges */
-.badge { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; white-space: nowrap; }
-.b-dtp { background: rgba(255, 59, 48, 0.15); color: var(--red); }
-.b-nodtp { background: rgba(52, 199, 89, 0.15); color: var(--green); }
-.b-f-Бензин { background: rgba(255, 149, 0, 0.15); color: var(--orange); }
-.b-f-Дизель { background: rgba(0, 113, 227, 0.15); color: var(--ac); }
-.b-f-Електро { background: rgba(175, 82, 222, 0.15); color: var(--purple); }
-.b-f-Гібрид { background: rgba(52, 199, 89, 0.15); color: var(--green); }
-.b-active { color: var(--green); font-weight: 500; }
-.b-inactive { color: var(--red); font-weight: 500; }
+.badge { padding: 5px 12px; border-radius: 8px; font-size: 11px; font-weight: 600; white-space: nowrap; display: inline-block; letter-spacing: 0.02em; }
+.b-dtp { background: rgba(255, 69, 58, 0.15); color: var(--red); border: 1px solid rgba(255, 69, 58, 0.2); }
+.b-nodtp { background: rgba(48, 209, 88, 0.15); color: var(--green); border: 1px solid rgba(48, 209, 88, 0.2); }
+.b-f-Бензин { background: rgba(255, 159, 10, 0.15); color: var(--orange); border: 1px solid rgba(255, 159, 10, 0.2); }
+.b-f-Дизель { background: rgba(10, 132, 255, 0.15); color: #0a84ff; border: 1px solid rgba(10, 132, 255, 0.2); }
+.b-f-Електро { background: rgba(191, 90, 242, 0.15); color: var(--purple); border: 1px solid rgba(191, 90, 242, 0.2); }
+.b-f-Гібрид { background: rgba(48, 209, 88, 0.15); color: var(--green); border: 1px solid rgba(48, 209, 88, 0.2); }
+.b-active { color: var(--green); font-weight: 600; }
+.b-inactive { color: var(--red); font-weight: 600; }
 
-.price-col { font-weight: 700; font-size: 14px; }
-.photos-wrap { display: flex; gap: 4px; max-width: 140px; overflow: hidden; }
-.photos-wrap img { width: 32px; height: 32px; border-radius: 6px; object-fit: cover; cursor: pointer; border: 1px solid var(--border); }
+.price-col { font-weight: 700; font-size: 14.5px; font-family: 'Outfit', sans-serif; }
+.photos-wrap { display: flex; gap: 6px; max-width: 150px; }
+.photos-wrap img { width: 36px; height: 36px; border-radius: 8px; object-fit: cover; cursor: pointer; border: 1px solid rgba(255,255,255,0.08); transition: transform 0.2s, border-color 0.2s; }
+.photos-wrap img:hover { transform: scale(1.1); border-color: var(--ac); }
 
 /* Progress bar */
-.progress-container { display: none; margin-bottom: 24px; }
-.progress-bg { height: 8px; background: rgba(134,134,139,0.2); border-radius: 4px; overflow: hidden; }
-.progress-bar { height: 100%; background: var(--ac); width: 0%; transition: width 0.3s; }
-.log-box { font-family: monospace; font-size: 11px; color: var(--text-muted); max-height: 100px; overflow-y: auto; margin-top: 8px; }
+.progress-container { display: none; margin-bottom: 2rem; background: var(--panel); border: 1px solid var(--panel-border); border-radius: 16px; padding: 18px 24px; box-shadow: var(--shadow); }
+.progress-header { display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; margin-bottom: 8px; color: var(--text-muted); }
+.progress-bg { height: 6px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden; margin-bottom: 12px; }
+.progress-bar { height: 100%; background: var(--ac); width: 0%; transition: width 0.3s ease; box-shadow: 0 0 10px rgba(0, 113, 227, 0.5); }
+.log-box { font-family: monospace; font-size: 11.5px; color: var(--text-muted); max-height: 90px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; }
 
-/* Modal */
+/* Lightbox Modal */
 .modal-overlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px);
-  z-index: 1000; display: none; align-items: center; justify-content: center; padding: 2rem;
+  position: fixed; inset: 0; background: rgba(3, 3, 5, 0.9); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+  z-index: 2000; display: none; align-items: center; justify-content: center; padding: 2rem; opacity: 0; transition: opacity 0.3s ease;
 }
-.modal-overlay.open { display: flex; }
-.modal-content {
-  background: var(--panel-solid); border-radius: var(--radius); max-width: 900px; width: 100%;
-  max-height: 90vh; overflow-y: auto; padding: 24px; position: relative;
+.modal-overlay.open { display: flex; opacity: 1; }
+.lightbox-content {
+  background: rgba(18, 18, 28, 0.85); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 24px;
+  max-width: 1000px; width: 100%; padding: 24px; box-shadow: 0 20px 80px rgba(0,0,0,0.8);
+  display: flex; flex-direction: column; gap: 16px;
 }
-.close-modal {
-  position: absolute; top: 16px; right: 16px; background: rgba(134,134,139,0.2); border-radius: 50%;
-  width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer;
+.lightbox-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 12px; }
+.lightbox-header h3 { font-size: 20px; font-weight: 700; font-family: 'Outfit', sans-serif; }
+.lightbox-info { display: flex; align-items: center; gap: 12px; }
+.lightbox-counter { font-size: 12.5px; color: var(--text-muted); background: rgba(255,255,255,0.05); padding: 4px 10px; border-radius: 6px; font-weight: 600; }
+.close-modal { background: rgba(255,255,255,0.05); color: var(--text); border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.2s; font-size: 15px; }
+.close-modal:hover { background: rgba(255,255,255,0.12); }
+
+.lightbox-main-view {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; position: relative;
+  height: 520px; background: #010103; border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,0.04);
 }
-.photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-top: 24px; }
-.photo-grid img { width: 100%; border-radius: 12px; aspect-ratio: 4/3; object-fit: cover; cursor: pointer; }
+.lightbox-img-container { flex: 1; height: 100%; display: flex; align-items: center; justify-content: center; padding: 12px; }
+.lightbox-img-container img { max-width: 100%; max-height: 100%; object-fit: contain; user-select: none; }
+.lightbox-arrow {
+  background: rgba(255, 255, 255, 0.05); border: none; color: #fff; font-size: 26px; width: 46px; height: 46px; border-radius: 50%;
+  cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; z-index: 10;
+}
+.lightbox-arrow:hover { background: rgba(255, 255, 255, 0.15); transform: scale(1.05); }
+.lightbox-arrow:active { transform: scale(0.95); }
+
+.lightbox-thumbnails-container { border-top: 1px solid rgba(255,255,255,0.06); padding-top: 16px; overflow-x: auto; }
+.lightbox-thumbnails { display: flex; gap: 8px; justify-content: flex-start; padding-bottom: 4px; }
+.lightbox-thumb { width: 70px; height: 50px; object-fit: cover; border-radius: 6px; cursor: pointer; border: 2px solid transparent; opacity: 0.4; transition: all 0.2s; flex-shrink: 0; }
+.lightbox-thumb.active { border-color: var(--ac); opacity: 1; transform: scale(1.02); }
+.lightbox-thumb:hover { opacity: 0.8; }
 </style>
 </head>
 <body>
 <div class="bg-shape s1"></div><div class="bg-shape s2"></div>
 
 <div class="container">
+  <!-- Header -->
   <div class="header">
     <div class="title">
       <h1>Аналітика PRIME AUTO</h1>
@@ -182,7 +210,12 @@ tr:hover td { background: rgba(134, 134, 139, 0.05); }
     </div>
   </div>
 
+  <!-- Progress bar -->
   <div class="progress-container" id="progCont">
+    <div class="progress-header">
+      <span id="progStatusTxt">Підготовка...</span>
+      <span id="progPercentTxt">0%</span>
+    </div>
     <div class="progress-bg"><div class="progress-bar" id="progBar"></div></div>
     <div class="log-box" id="progLog"></div>
   </div>
@@ -194,7 +227,7 @@ tr:hover td { background: rgba(134, 134, 139, 0.05); }
         <h3>Продавці (ID або URL)</h3>
         <div class="seller-input">
           <input type="text" id="sellerInput" class="input" placeholder="URL з auto.ria або ID">
-          <button class="btn btn-primary" onclick="addSeller()">+</button>
+          <button class="btn-add" onclick="addSeller()">+</button>
         </div>
         <div class="seller-list" id="sellerList"></div>
       </div>
@@ -203,7 +236,7 @@ tr:hover td { background: rgba(134, 134, 139, 0.05); }
         <h3>Фільтри</h3>
         <div class="filters-wrap">
           <div>
-            <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px">Паливо:</div>
+            <div class="filter-label">Паливо:</div>
             <div class="filter-group" id="fuelFilters">
               <button class="f-btn" data-type="fuel" data-val="Бензин">Бензин</button>
               <button class="f-btn" data-type="fuel" data-val="Дизель">Дизель</button>
@@ -212,7 +245,7 @@ tr:hover td { background: rgba(134, 134, 139, 0.05); }
             </div>
           </div>
           <div>
-            <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px">Стан:</div>
+            <div class="filter-label">Стан:</div>
             <div class="filter-group" id="dtpFilters">
               <button class="f-btn" data-type="dtp" data-val="Не ДТП">Без ДТП</button>
               <button class="f-btn" data-type="dtp" data-val="Був в ДТП">Був в ДТП</button>
@@ -225,7 +258,8 @@ tr:hover td { background: rgba(134, 134, 139, 0.05); }
 
     <!-- Main Content -->
     <div class="main-content">
-      <div class="card" style="padding: 16px;">
+      <!-- Analytics Stats -->
+      <div class="card" style="padding: 20px; background: rgba(18, 18, 28, 0.35);">
         <div class="analytics">
           <div class="stat-box">
             <div class="stat-lbl">Всього авто</div>
@@ -233,7 +267,7 @@ tr:hover td { background: rgba(134, 134, 139, 0.05); }
           </div>
           <div class="stat-box">
             <div class="stat-lbl">Сумарна вартість</div>
-            <div class="stat-val" id="statTotalVal" style="color:var(--green)">$0</div>
+            <div class="stat-val" id="statTotalVal" style="color: var(--green);">$0</div>
           </div>
           <div class="stat-box">
             <div class="stat-lbl">Середня ціна</div>
@@ -241,31 +275,32 @@ tr:hover td { background: rgba(134, 134, 139, 0.05); }
           </div>
           <div class="stat-box">
             <div class="stat-lbl">Найдорожче авто</div>
-            <div class="stat-val" id="statMax" style="font-size:18px;margin-bottom:2px">$0</div>
+            <div class="stat-val" id="statMax" style="font-size: 22px; margin-bottom: 2px;">$0</div>
             <div class="stat-sub" id="statMaxN">—</div>
           </div>
           <div class="stat-box">
             <div class="stat-lbl">Найдешевше авто</div>
-            <div class="stat-val" id="statMin" style="font-size:18px;margin-bottom:2px">$0</div>
+            <div class="stat-val" id="statMin" style="font-size: 22px; margin-bottom: 2px;">$0</div>
             <div class="stat-sub" id="statMinN">—</div>
           </div>
         </div>
       </div>
 
-      <div class="card">
+      <!-- Cars Table -->
+      <div class="card" style="padding: 0px; overflow: hidden;">
         <div class="table-container">
           <table>
             <thead>
               <tr>
-                <th onclick="setSort('i')">#</th>
+                <th onclick="setSort('i')" style="width: 50px;">#</th>
                 <th onclick="setSort('name_en')">Модель</th>
-                <th onclick="setSort('year')">Рік</th>
-                <th onclick="setSort('price')">Ціна</th>
-                <th onclick="setSort('fuel')">Паливо</th>
-                <th>ДТП</th>
-                <th>Пробіг</th>
-                <th>Фото</th>
-                <th>Статус</th>
+                <th onclick="setSort('year')" style="width: 80px;">Рік</th>
+                <th onclick="setSort('price')" style="width: 120px;">Ціна</th>
+                <th onclick="setSort('fuel')" style="width: 110px;">Паливо</th>
+                <th style="width: 110px;">ДТП</th>
+                <th style="width: 120px;">Пробіг</th>
+                <th style="width: 160px;">Фото</th>
+                <th style="width: 100px;">Статус</th>
               </tr>
             </thead>
             <tbody id="tbody"></tbody>
@@ -276,12 +311,32 @@ tr:hover td { background: rgba(134, 134, 139, 0.05); }
   </div>
 </div>
 
-<!-- Modal -->
+<!-- Lightbox Modal -->
 <div class="modal-overlay" id="modal">
-  <div class="modal-content">
-    <div class="close-modal" onclick="document.getElementById('modal').classList.remove('open')">✕</div>
-    <h3 id="modalTitle" style="font-size:20px;margin-bottom:8px">Фото</h3>
-    <div class="photo-grid" id="modalGrid"></div>
+  <div class="lightbox-content">
+    <div class="lightbox-header">
+      <h3 id="modalTitle">Модель авто</h3>
+      <div class="lightbox-info">
+        <span class="lightbox-counter" id="modalCounter">0 / 0</span>
+        <div class="close-modal" onclick="closeGallery()">✕</div>
+      </div>
+    </div>
+
+    <!-- Main Lightbox Image View -->
+    <div class="lightbox-main-view">
+      <button class="lightbox-arrow" onclick="prevSlide()">‹</button>
+      <div class="lightbox-img-container">
+        <img id="modalMainImg" src="" alt="Main Preview">
+      </div>
+      <button class="lightbox-arrow" onclick="nextSlide()">›</button>
+    </div>
+
+    <!-- Thumbnails navigation bar -->
+    <div class="lightbox-thumbnails-container">
+      <div class="lightbox-thumbnails" id="modalThumbnails">
+        <!-- Javascript injected thumbnails -->
+      </div>
+    </div>
   </div>
 </div>
 
@@ -294,10 +349,15 @@ let sortAsc = true;
 let activeFilters = { fuel: new Set(), dtp: new Set() };
 let pollTimer = null;
 
+// --- Lightbox Slider State ---
+let currentCarPhotos = [];
+let currentPhotoIndex = 0;
+
 // --- Init ---
 renderSellers();
 initFilterEvents();
 checkStatus();
+loadData(); // initial data load
 
 // --- Sellers Logic ---
 function saveSellers() { localStorage.setItem('pa_sellers', JSON.stringify(sellers)); renderSellers(); }
@@ -311,7 +371,7 @@ function addSeller() {
   let val = inp.value.trim();
   if(!val) return;
   // Try extract ID from URL
-  const m = val.match(/(?:user_id=|dealers\/[^\/]+\/|cabinet\/)(\d+)/);
+  const m = val.match(/(?:user_id=|dealers\/[^\/]+\/|cabinet\/|pro\/seller-)(\d+)/);
   if(m) val = m[1];
   else val = val.replace(/\D/g, ''); // just digits if raw input
   
@@ -334,6 +394,8 @@ async function runScrape() {
   document.getElementById('progCont').style.display = 'block';
   document.getElementById('progLog').innerHTML = '';
   document.getElementById('progBar').style.width = '0%';
+  document.getElementById('progPercentTxt').textContent = '0%';
+  document.getElementById('progStatusTxt').textContent = 'Підготовка до парсингу...';
 
   try {
     await fetch('/api/scrape', {
@@ -355,14 +417,26 @@ function checkStatus() {
       const d = await res.json();
       
       document.getElementById('progBar').style.width = d.progress + '%';
+      document.getElementById('progPercentTxt').textContent = d.progress + '%';
+      
+      if(d.running) {
+        document.getElementById('progCont').style.display = 'block';
+        document.getElementById('btnUpdate').disabled = true;
+        document.getElementById('btnUpdate').textContent = 'Парсинг...';
+        document.getElementById('progStatusTxt').textContent = 'Збирання оголошень...';
+      }
+      
       const logBox = document.getElementById('progLog');
-      logBox.innerHTML = d.log.slice(-10).map(l => `<div>[${l.t.split('T')[1].slice(0,8)}] ${l.msg}</div>`).join('');
-      logBox.scrollTop = logBox.scrollHeight;
+      if (d.log && d.log.length > 0) {
+        logBox.innerHTML = d.log.slice(-10).map(l => `<div>[${l.t.split('T')[1].slice(0,8)}] ${l.msg}</div>`).join('');
+        logBox.scrollTop = logBox.scrollHeight;
+      }
 
-      if(!d.running) {
+      if(!d.running && d.started_at) {
         clearInterval(pollTimer);
         document.getElementById('btnUpdate').disabled = false;
         document.getElementById('btnUpdate').textContent = 'Оновити дані';
+        document.getElementById('progCont').style.display = 'none';
         if(d.has_result) loadData();
       }
     } catch(e){}
@@ -375,8 +449,9 @@ async function loadData() {
     if(!res.ok) return;
     const data = await res.json();
     allCars = (data.cars || []).map((c,i) => ({...c, i: i+1}));
-    document.getElementById('lastSyncTxt').textContent = 'Останнє оновлення: ' + new Date(data.scraped_at+'Z').toLocaleString('uk');
-    document.getElementById('progCont').style.display = 'none';
+    if (data.scraped_at) {
+      document.getElementById('lastSyncTxt').textContent = 'Останнє оновлення: ' + new Date(data.scraped_at+'Z').toLocaleString('uk');
+    }
     renderTable();
   } catch(e) {}
 }
@@ -430,19 +505,20 @@ function renderTable() {
   document.getElementById('tbody').innerHTML = rows.map((c, idx) => {
     const dtpCls = c.dtp === 'Був в ДТП' ? 'b-dtp' : 'b-nodtp';
     const fuelCls = `b-f-${c.fuel}`;
-    const ph = (c.photos||[]).slice(0,3).map(u => `<img src="${u}" onclick="openGallery(${c.i-1})">`).join('');
+    // Thumbnail previews (first 3)
+    const ph = (c.photos||[]).slice(0,3).map((u, pIdx) => `<img src="${u}" onclick="openGallery(${c.i-1}, ${pIdx})">`).join('');
     return `
       <tr>
-        <td style="color:var(--text-muted)">${idx+1}</td>
+        <td style="color: var(--text-muted); font-weight: 500;">${idx+1}</td>
         <td>
-          <div style="font-weight:600">${c.name_en}</div>
-          <div style="font-size:11px;color:var(--text-muted)"><a href="${c.url}" target="_blank">↗ auto.ria</a></div>
+          <div style="font-weight: 600; font-size: 14.5px; color: var(--text);">${c.name_en}</div>
+          <div style="font-size: 11px; margin-top: 4px;"><a href="${c.url}" target="_blank" style="color: var(--ac); text-decoration: none; display: inline-flex; align-items: center; gap: 3px;">↗ auto.ria</a></div>
         </td>
-        <td>${c.year}</td>
+        <td style="font-weight: 500;">${c.year}</td>
         <td class="price-col">${c.price}</td>
         <td><span class="badge ${fuelCls}">${c.fuel}</span></td>
         <td><span class="badge ${dtpCls}">${c.dtp}</span></td>
-        <td style="color:var(--text-muted)">${c.mileage}</td>
+        <td style="color: var(--text-muted); font-weight: 500;">${c.mileage}</td>
         <td><div class="photos-wrap">${ph}</div></td>
         <td class="${c.active!==false ? 'b-active' : 'b-inactive'}">${c.active!==false ? 'Активне' : 'Знято'}</td>
       </tr>
@@ -470,22 +546,92 @@ function updateAnalytics(rows) {
   const min = prices[0];
   const max = prices[prices.length-1];
 
-  document.getElementById('statTotalVal').textContent = '$' + sum.toLocaleString('uk');
-  document.getElementById('statAvg').textContent = '$' + avg.toLocaleString('uk');
-  document.getElementById('statMax').textContent = '$' + max.p.toLocaleString('uk');
+  document.getElementById('statTotalVal').textContent = '$' + sum.toLocaleString('uk').replace(/,/g, ' ');
+  document.getElementById('statAvg').textContent = '$' + avg.toLocaleString('uk').replace(/,/g, ' ');
+  document.getElementById('statMax').textContent = '$' + max.p.toLocaleString('uk').replace(/,/g, ' ');
   document.getElementById('statMaxN').textContent = max.n;
-  document.getElementById('statMin').textContent = '$' + min.p.toLocaleString('uk');
+  document.getElementById('statMin').textContent = '$' + min.p.toLocaleString('uk').replace(/,/g, ' ');
   document.getElementById('statMinN').textContent = min.n;
 }
 
-// --- Gallery ---
-function openGallery(idx) {
-  const c = allCars[idx];
-  if(!c || !c.photos) return;
+// --- Lightbox Gallery Logic ---
+function openGallery(carIdx, photoIdx = 0) {
+  const c = allCars[carIdx];
+  if(!c || !c.photos || c.photos.length === 0) return;
+  
+  currentCarPhotos = c.photos;
+  currentPhotoIndex = photoIdx;
+  
   document.getElementById('modalTitle').textContent = c.name_en;
-  document.getElementById('modalGrid').innerHTML = c.photos.map(u => `<img src="${u}" onclick="window.open('${u}','_blank')">`).join('');
-  document.getElementById('modal').classList.add('open');
+  
+  const modal = document.getElementById('modal');
+  modal.style.display = 'flex';
+  setTimeout(() => modal.classList.add('open'), 10);
+  
+  updateLightbox();
 }
+
+function updateLightbox() {
+  if (currentCarPhotos.length === 0) return;
+  
+  const mainImg = document.getElementById('modalMainImg');
+  mainImg.src = currentCarPhotos[currentPhotoIndex];
+  
+  document.getElementById('modalCounter').textContent = `${currentPhotoIndex + 1} з ${currentCarPhotos.length}`;
+  
+  // Render thumbnails
+  const thumbsContainer = document.getElementById('modalThumbnails');
+  thumbsContainer.innerHTML = currentCarPhotos.map((url, i) => `
+    <img src="${url}" 
+         class="lightbox-thumb ${i === currentPhotoIndex ? 'active' : ''}" 
+         onclick="selectSlide(${i})">
+  `).join('');
+  
+  // Smooth scroll active thumb in slider container
+  const activeThumb = thumbsContainer.querySelector('.lightbox-thumb.active');
+  if (activeThumb) {
+    activeThumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+  }
+}
+
+function selectSlide(idx) {
+  currentPhotoIndex = idx;
+  updateLightbox();
+}
+
+function nextSlide() {
+  if (currentCarPhotos.length === 0) return;
+  currentPhotoIndex = (currentPhotoIndex + 1) % currentCarPhotos.length;
+  updateLightbox();
+}
+
+function prevSlide() {
+  if (currentCarPhotos.length === 0) return;
+  currentPhotoIndex = (currentPhotoIndex - 1 + currentCarPhotos.length) % currentCarPhotos.length;
+  updateLightbox();
+}
+
+function closeGallery() {
+  const modal = document.getElementById('modal');
+  modal.classList.remove('open');
+  setTimeout(() => {
+    modal.style.display = 'none';
+  }, 300);
+}
+
+// Keyboard navigation
+document.addEventListener('keydown', (e) => {
+  const modal = document.getElementById('modal');
+  if (!modal || !modal.classList.contains('open')) return;
+  
+  if (e.key === 'ArrowRight') {
+    nextSlide();
+  } else if (e.key === 'ArrowLeft') {
+    prevSlide();
+  } else if (e.key === 'Escape') {
+    closeGallery();
+  }
+});
 
 // --- Export ---
 function exportData(type) {

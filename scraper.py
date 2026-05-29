@@ -78,22 +78,48 @@ def _clean_price(raw) -> str:
     digits = re.sub(r"\D", "", str(raw))
     return f"${int(digits):,}".replace(",", " ") if digits else "—"
 
-def _extract_photos(html: str) -> list:
-    """Extract unique full-size (fx) photo URLs from page HTML."""
-    # fx = full-size, bx = big thumbnail
-    all_ph = re.findall(
-        r'https://cdn\d*\.riastatic\.com/photosnew/auto/photo/[^\"\'\s<>]+?(?:fx|bx)\.(?:webp|jpg)',
-        html
-    )
-    seen = set()
+def _extract_photos(html: str, url: str) -> list:
+    """Extract unique full-size (fx) photo URLs from page HTML, avoiding recommended listings."""
+    m_slug = re.search(r'/auto_(.+)_\d+\.html', url)
+    slug = m_slug.group(1) if m_slug else ""
+
+    gallery_html = ""
+    for container in ['class="preview-gallery"', 'id="photosBlock"', 'class="photo-gallery"', 'class="photo-620x465"']:
+        idx = html.find(container)
+        if idx != -1:
+            gallery_html = html[idx : idx + 60000]
+            break
+
+    if gallery_html:
+        photos = re.findall(
+            r'https://cdn\d*\.riastatic\.com/photosnew/auto/photo/[^\"\'\s<>]+?\.(?:webp|jpg)',
+            gallery_html
+        )
+    else:
+        all_ph = re.findall(
+            r'https://cdn\d*\.riastatic\.com/photosnew/auto/photo/[^\"\'\s<>]+?\.(?:webp|jpg)',
+            html
+        )
+        if slug:
+            photos = [p for p in all_ph if f"/{slug}__" in p or f"/{slug}_" in p]
+        else:
+            photos = all_ph
+
+    seen_ids = set()
     full = []
-    for p in all_ph:
-        # Prefer fx; convert bx → fx if fx version not already added
+    for p in photos:
         fx = p.replace("bx.webp", "fx.webp").replace("bx.jpg", "fx.jpg")
-        if fx not in seen:
-            seen.add(fx)
+        fx = re.sub(r'(?:bx|s|m|hd|fhd)\.(webp|jpg)$', r'fx.\1', fx)
+        
+        base = re.sub(r'\.(webp|jpg)$', '', fx)
+        m_id = re.search(r'__(\d+)fx$', base)
+        photo_id = m_id.group(1) if m_id else base
+        
+        if photo_id not in seen_ids:
+            seen_ids.add(photo_id)
             full.append(fx)
-    return full[:30]  # cap at 30 photos per car
+            
+    return full[:30]
 
 def _extract_dtp(html: str) -> str:
     if re.search(r'Був\s+(?:у|в|в)\s*ДТП', html, re.IGNORECASE):
@@ -158,7 +184,7 @@ def parse_car(sess: requests.Session, url: str) -> dict:
         car["dtp"] = _extract_dtp(html)
 
         # Photos
-        car["photos"] = _extract_photos(html)
+        car["photos"] = _extract_photos(html, url)
 
         # Title
         title_m = re.search(r"<title>(.*?)</title>", html, re.DOTALL)
