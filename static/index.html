@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PRIME AUTO — Панель Керування</title>
+<title>PRIME AUTO — Rec Панель</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -177,7 +177,7 @@ body.light-theme .seller-item { background: rgba(0,0,0,0.02); }
 .del-btn:hover { color: var(--red); }
 
 /* Analytics Grid */
-.analytics { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+.analytics { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 20px; }
 .stat-box {
   background: rgba(255,255,255,0.02); border: 1px solid var(--panel-border); border-radius: 16px; padding: 20px;
   display: flex; flex-direction: column; justify-content: center; transition: background 0.3s;
@@ -189,17 +189,65 @@ body.light-theme .stat-box:hover { background: rgba(0,0,0,0.03); }
 .stat-lbl { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
 .stat-sub { font-size: 12px; color: var(--text-muted); margin-top: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500; }
 
-/* SVG Chart styling */
+/* SVG Spline Chart styling */
 .chart-container { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border); }
 .chart-title-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
 .chart-title-row h4 { font-size: 12.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
 .chart-desc { font-size: 12px; color: var(--text-muted); }
 .svg-chart { width: 100%; height: 180px; }
-.svg-bar { fill: var(--ac); opacity: 0.85; transition: fill 0.3s, opacity 0.2s, height 0.5s ease-out, y 0.5s ease-out; cursor: pointer; rx: 6px; }
-.svg-bar:hover { fill: var(--ac-hover); opacity: 1; }
-.svg-text { fill: var(--text); font-size: 10.5px; font-family: var(--font); font-weight: 600; text-anchor: middle; }
 .svg-axis-label { fill: var(--text-muted); font-size: 9.5px; font-family: var(--font); font-weight: 600; text-anchor: middle; }
 .svg-grid-line { stroke: var(--border); stroke-width: 1; stroke-dasharray: 4,4; }
+
+/* Large Detail Preview Banner CSS */
+.banner-grid { display: grid; grid-template-columns: 360px 1fr; gap: 24px; align-items: stretch; }
+.banner-left { position: relative; height: 100%; border-radius: 12px; overflow: hidden; background: #010103; border: 1px solid var(--border); }
+.banner-img-wrap { width: 100%; height: 260px; overflow: hidden; cursor: pointer; position: relative; border-radius: 12px; }
+.banner-main-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }
+.banner-img-wrap:hover .banner-main-img { transform: scale(1.04); }
+.banner-img-overlay {
+  position: absolute; inset: 0; background: rgba(0,0,0,0.5); opacity: 0; display: flex; align-items: center;
+  justify-content: center; color: white; font-weight: 600; font-size: 13.5px; transition: opacity 0.3s;
+}
+.banner-img-wrap:hover .banner-img-overlay { opacity: 1; }
+
+.banner-right { display: flex; flex-direction: column; justify-content: space-between; gap: 16px; }
+.banner-header-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+.banner-title { font-size: 24px; font-weight: 800; font-family: 'Outfit', sans-serif; letter-spacing: -0.02em; }
+.banner-year { font-size: 16px; font-weight: 500; color: var(--text-muted); margin-left: 6px; }
+.banner-spec-row { display: flex; gap: 10px; align-items: center; margin-top: 8px; flex-wrap: wrap; }
+.banner-price { font-size: 28px; font-weight: 900; color: var(--green); font-family: 'Outfit', sans-serif; text-shadow: 0 0 20px rgba(48, 209, 88, 0.2); }
+body.light-theme .banner-price { text-shadow: none; }
+
+.banner-gallery-wrap { display: flex; flex-direction: column; gap: 8px; }
+.banner-gallery-title { font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.banner-gallery-strip { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
+.banner-gallery-thumb { width: 48px; height: 36px; object-fit: cover; border-radius: 6px; cursor: pointer; border: 2px solid transparent; opacity: 0.5; transition: all 0.2s; flex-shrink: 0; }
+.banner-gallery-thumb.active { border-color: var(--ac); opacity: 1; transform: scale(1.05); }
+.banner-gallery-thumb:hover { opacity: 0.9; }
+
+.banner-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 6px; }
+
+/* Responsive mobile cars card-grid layout */
+.mobile-cars-grid { display: none; flex-direction: column; gap: 16px; margin-top: 10px; }
+.mobile-car-card {
+  background: var(--panel); border: 1px solid var(--panel-border); border-radius: 16px;
+  padding: 18px; display: flex; flex-direction: column; gap: 14px; cursor: pointer; transition: all 0.2s;
+}
+.mobile-car-card.selected-card {
+  border-color: var(--ac); background: rgba(0, 113, 227, 0.05);
+}
+.mobile-card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.mobile-card-title { font-size: 16px; font-weight: 700; font-family: 'Outfit'; }
+.mobile-card-price { font-size: 18px; font-weight: 800; color: var(--green); font-family: 'Outfit'; }
+.mobile-card-specs { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.mobile-card-gallery { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; }
+.mobile-card-gallery img { width: 44px; height: 44px; border-radius: 6px; object-fit: cover; border: 1px solid var(--border); flex-shrink: 0; }
+.mobile-card-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; }
+
+/* Desktop table selections and rows styling */
+tr[data-car-idx] { cursor: pointer; }
+tr.selected-row td { background: rgba(0, 113, 227, 0.08) !important; color: white !important; font-weight: 600; }
+body.light-theme tr.selected-row td { color: var(--ac) !important; background: rgba(0, 113, 227, 0.05) !important; }
 
 /* Search & Table Header Actions */
 .table-header-card { display: flex; justify-content: space-between; align-items: center; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
@@ -308,6 +356,12 @@ body.light-theme .lightbox-thumbnails-container { border-top-color: rgba(0,0,0,0
 .lightbox-thumb.active { border-color: var(--ac); opacity: 1; transform: scale(1.02); }
 .lightbox-thumb:hover { opacity: 0.8; }
 
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .table-container { display: none; }
+  .mobile-cars-grid { display: flex; }
+}
+
 /* Toast Notifications Container */
 #toastContainer { position: fixed; bottom: 24px; right: 24px; z-index: 3000; display: flex; flex-direction: column; gap: 10px; }
 </style>
@@ -319,7 +373,7 @@ body.light-theme .lightbox-thumbnails-container { border-top-color: rgba(0,0,0,0
   <!-- Header -->
   <div class="header">
     <div class="title">
-      <h1>Аналітика PRIME AUTO</h1>
+      <h1>PRIME AUTO | Rec Панель</h1>
       <p id="lastSyncTxt">Останнє оновлення: —</p>
     </div>
     
@@ -400,11 +454,11 @@ body.light-theme .lightbox-thumbnails-container { border-top-color: rgba(0,0,0,0
 
     <!-- Main Content -->
     <div class="main-content">
-      <!-- Analytics Stats -->
+      <!-- Analytics Stats Card -->
       <div class="card" style="padding: 24px; background: rgba(18, 18, 28, 0.35);">
         <div class="analytics">
           <div class="stat-box">
-            <div class="stat-lbl">Всього авто</div>
+            <div class="stat-lbl">Всього</div>
             <div class="stat-val" id="statCount">0</div>
           </div>
           <div class="stat-box">
@@ -416,18 +470,18 @@ body.light-theme .lightbox-thumbnails-container { border-top-color: rgba(0,0,0,0
             <div class="stat-val" id="statAvg">$0</div>
           </div>
           <div class="stat-box">
-            <div class="stat-lbl">Найдорожче авто</div>
+            <div class="stat-lbl">Найдорожче</div>
             <div class="stat-val" id="statMax" style="font-size: 22px; margin-bottom: 2px;">$0</div>
             <div class="stat-sub" id="statMaxN">—</div>
           </div>
           <div class="stat-box">
-            <div class="stat-lbl">Найдешевше авто</div>
+            <div class="stat-lbl">Найдешевше</div>
             <div class="stat-val" id="statMin" style="font-size: 22px; margin-bottom: 2px;">$0</div>
             <div class="stat-sub" id="statMinN">—</div>
           </div>
         </div>
 
-        <!-- Price Distribution SVG Chart -->
+        <!-- Price Distribution Spline Curve Chart -->
         <div class="chart-container">
           <div class="chart-title-row">
             <h4>Розподіл цін автопарку</h4>
@@ -441,12 +495,17 @@ body.light-theme .lightbox-thumbnails-container { border-top-color: rgba(0,0,0,0
         </div>
       </div>
 
-      <!-- Cars Table Card -->
+      <!-- Large Detail Preview Banner Card -->
+      <div class="card" id="detailBannerCard" style="display: none; padding: 24px; background: rgba(18, 18, 28, 0.5);">
+        <!-- Dynamically populated by selected car -->
+      </div>
+
+      <!-- Cars List Card -->
       <div class="card" style="padding: 24px 0px 0px 0px; overflow: hidden;">
         <!-- Table Header and Live Search -->
         <div class="table-header-card" style="padding: 0 24px 20px 24px; border-bottom: 1px solid var(--border);">
           <div class="table-title-search">
-            <h2>Список автомобілів</h2>
+            <h2>Список моделей</h2>
             <div class="search-wrapper">
               <svg class="search-icon" viewBox="0 0 24 24">
                 <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
@@ -456,6 +515,7 @@ body.light-theme .lightbox-thumbnails-container { border-top-color: rgba(0,0,0,0
           </div>
         </div>
 
+        <!-- Desktop table (hidden on mobile) -->
         <div class="table-container">
           <table>
             <thead>
@@ -468,11 +528,16 @@ body.light-theme .lightbox-thumbnails-container { border-top-color: rgba(0,0,0,0
                 <th style="width: 110px;">ДТП</th>
                 <th style="width: 120px;">Пробіг</th>
                 <th style="width: 160px;">Фото</th>
-                <th style="width: 100px;">Статус</th>
+                <th style="width: 120px;">Дії</th>
               </tr>
             </thead>
             <tbody id="tbody"></tbody>
           </table>
+        </div>
+
+        <!-- 100% Mobile responsive cars list (visible on mobile < 768px) -->
+        <div class="mobile-cars-grid" id="mobileCarsGrid" style="padding: 0 18px 18px 18px;">
+          <!-- Dynamically populated by selected filters/cars list -->
         </div>
       </div>
     </div>
@@ -508,6 +573,56 @@ body.light-theme .lightbox-thumbnails-container { border-top-color: rgba(0,0,0,0
   </div>
 </div>
 
+<!-- Improvements Modal Popup -->
+<div class="modal-overlay" id="improvementsModal">
+  <div class="lightbox-content" style="max-width: 600px;">
+    <div class="lightbox-header">
+      <h3 style="display:flex;align-items:center;gap:8px;font-family:'Outfit';">
+        <svg viewBox="0 0 24 24" style="width:22px;height:22px;fill:var(--ac);"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2-1.1 0-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.75z"/></svg>
+        Аналітика покращення оголошення
+      </h3>
+      <div class="close-modal" onclick="closeImprovements()">✕</div>
+    </div>
+    
+    <div style="padding: 10px 0; display: flex; flex-direction: column; gap: 16px;">
+      <h4 id="impModalTitle" style="font-size:18px;font-family:'Outfit';font-weight:700;">Модель автомобіля</h4>
+      
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center;">
+          <div style="font-size:11px;color:var(--text-muted);font-weight:600;text-transform:uppercase;margin-bottom:4px;">Потенціал CTR</div>
+          <div style="font-size:20px;font-weight:800;color:var(--green);font-family:'Outfit';">+24.5%</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center;">
+          <div style="font-size:11px;color:var(--text-muted);font-weight:600;text-transform:uppercase;margin-bottom:4px;">Оптимальна ціна</div>
+          <div id="impModalPrice" style="font-size:20px;font-weight:800;font-family:'Outfit';">$0</div>
+        </div>
+      </div>
+      
+      <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:12px;padding:16px;">
+        <div style="font-size:11px;color:var(--text-muted);font-weight:700;text-transform:uppercase;margin-bottom:10px;letter-spacing:0.05em;">Рекомендації щодо оптимізації</div>
+        <ul style="list-style-type:none;display:flex;flex-direction:column;gap:10px;font-size:13px;font-weight:500;">
+          <li style="display:flex;align-items:flex-start;gap:8px;">
+            <span style="color:var(--ac);">•</span>
+            <span>Завантажте фото високої якості у перші 3 позиції оголошення (це збільшить перегляди до +15%).</span>
+          </li>
+          <li style="display:flex;align-items:flex-start;gap:8px;">
+            <span style="color:var(--ac);">•</span>
+            <span>Найкращий час для оновлення оголошення (автопідйому) — <b>вівторок та четвер о 18:30</b>.</span>
+          </li>
+          <li style="display:flex;align-items:flex-start;gap:8px;">
+            <span style="color:var(--ac);">•</span>
+            <span>Опис містить ключові деталі, але рекомендується додати більше інформації про стан ЛКП.</span>
+          </li>
+        </ul>
+      </div>
+      
+      <div style="background:rgba(10,132,255,0.05);border:1px solid rgba(10,132,255,0.15);border-radius:12px;padding:12px;font-size:12.5px;color:var(--text-muted);text-align:center;font-weight:500;">
+        Ця функція знаходиться на етапі прототипування. У майбутньому сюди будуть інтегровані автоматизовані підказки штучного інтелекту.
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Toast Alert Container -->
 <div id="toastContainer"></div>
 
@@ -519,6 +634,10 @@ let sortCol = 'i';
 let sortAsc = true;
 let activeFilters = { fuel: new Set(), dtp: new Set() };
 let pollTimer = null;
+
+// --- Banner Preview Selection State ---
+let selectedCarIndex = null;
+let selectedPhotoIndex = 0;
 
 // --- Lightbox Slider State ---
 let currentCarPhotos = [];
@@ -559,7 +678,7 @@ function toggleTheme() {
     showToast("Темну тему активовано", "info");
   }
   
-  // Re-draw SVG chart with updated theme colors
+  // Re-draw SVG spline chart with updated theme colors
   drawChart();
 }
 
@@ -576,7 +695,6 @@ function showToast(msg, type = "info") {
   const container = document.getElementById('toastContainer');
   const toast = document.createElement('div');
   
-  // Custom toast styling
   toast.style.cssText = `
     padding: 12px 24px;
     border-radius: 12px;
@@ -711,6 +829,13 @@ async function loadData() {
     if (data.scraped_at) {
       document.getElementById('lastSyncTxt').textContent = 'Останнє оновлення: ' + new Date(data.scraped_at+'Z').toLocaleString('uk');
     }
+    
+    // Auto-select first car if not selected
+    if (allCars.length > 0) {
+      selectedCarIndex = 0;
+      selectedPhotoIndex = 0;
+    }
+    
     renderTable();
   } catch(e) {}
 }
@@ -740,7 +865,127 @@ function setSort(col) {
   renderTable();
 }
 
-// --- Rendering Table & Indicators ---
+// --- Detail Preview Banner Interaction ---
+function selectCar(carIdx) {
+  selectedCarIndex = carIdx;
+  selectedPhotoIndex = 0;
+  renderDetailBanner();
+  
+  // Highlight selected row/card
+  document.querySelectorAll('tr[data-car-idx]').forEach(tr => {
+    tr.classList.remove('selected-row');
+    if (parseInt(tr.getAttribute('data-car-idx')) === carIdx) {
+      tr.classList.add('selected-row');
+    }
+  });
+  
+  document.querySelectorAll('.mobile-car-card').forEach(card => {
+    card.classList.remove('selected-card');
+    if (parseInt(card.getAttribute('data-car-idx')) === carIdx) {
+      card.classList.add('selected-card');
+    }
+  });
+}
+
+function changeBannerPhoto(pIdx, event) {
+  event.stopPropagation();
+  selectedPhotoIndex = pIdx;
+  renderDetailBanner();
+}
+
+function renderDetailBanner() {
+  const container = document.getElementById('detailBannerCard');
+  if (selectedCarIndex === null || allCars.length === 0) {
+    container.style.display = 'none';
+    return;
+  }
+  
+  const c = allCars[selectedCarIndex];
+  if (!c) return;
+  
+  container.style.display = 'block';
+  
+  const mainPhoto = (c.photos && c.photos.length > 0) ? c.photos[selectedPhotoIndex] : 'assets/bmw-showroom.jpg';
+  const dtpCls = c.dtp === 'Був в ДТП' ? 'b-dtp' : 'b-nodtp';
+  const fuelCls = `b-f-${c.fuel}`;
+  
+  // Mini thumbnails gallery strip (up to 12)
+  const thumbs = (c.photos || []).slice(0, 12).map((u, pIdx) => `
+    <img src="${u}" 
+         class="banner-gallery-thumb ${pIdx === selectedPhotoIndex ? 'active' : ''}" 
+         onclick="changeBannerPhoto(${pIdx}, event)">
+  `).join('');
+  
+  container.innerHTML = `
+    <div class="banner-grid">
+      <div class="banner-left">
+        <div class="banner-img-wrap" onclick="openGallery(${c.i-1}, ${selectedPhotoIndex})">
+          <img src="${mainPhoto}" alt="${c.name_en}" class="banner-main-img">
+          <div class="banner-img-overlay">
+            <span>🔍 Збільшити фото</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="banner-right">
+        <div class="banner-header-row">
+          <div>
+            <h2 class="banner-title">${c.name_en} <span class="banner-year">${c.year}</span></h2>
+            <div class="banner-spec-row">
+              <span class="badge ${fuelCls}">${c.fuel}</span>
+              <span class="badge ${dtpCls}">${c.dtp}</span>
+              <span style="font-size: 13px; color: var(--text-muted); font-weight: 500; margin-left: 4px;">
+                ${c.mileage} • ${c.transmission || 'Автомат'}
+              </span>
+            </div>
+          </div>
+          <div class="banner-price-wrap">
+            <div class="banner-price">${c.price}</div>
+          </div>
+        </div>
+        
+        <div class="banner-gallery-wrap">
+          <div class="banner-gallery-title">Фотографії лота:</div>
+          <div class="banner-gallery-strip">${thumbs}</div>
+        </div>
+        
+        <div class="banner-actions">
+          <button class="btn btn-primary" onclick="openImprovements(${c.i-1}, event)">
+            <svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:currentColor;vertical-align:middle;margin-right:6px;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2-1.1 0-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.75z"/></svg>
+            Подивитися покращення
+          </button>
+          <a href="${c.url}" target="_blank" class="btn btn-secondary">
+            ↗ auto.ria
+          </a>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// --- "Посмотреть улучшения" Popup Logic ---
+function openImprovements(idx, event) {
+  if (event) event.stopPropagation(); // prevent card selection trigger
+  const c = allCars[idx];
+  if (!c) return;
+  
+  document.getElementById('impModalTitle').textContent = c.name_en;
+  document.getElementById('impModalPrice').textContent = c.price;
+  
+  const modal = document.getElementById('improvementsModal');
+  modal.style.display = 'flex';
+  setTimeout(() => modal.classList.add('open'), 10);
+}
+
+function closeImprovements() {
+  const modal = document.getElementById('improvementsModal');
+  modal.classList.remove('open');
+  setTimeout(() => {
+    modal.style.display = 'none';
+  }, 300);
+}
+
+// --- Rendering ---
 function renderTable() {
   // Apply Search filter
   const searchVal = document.getElementById('searchInput').value.toLowerCase();
@@ -756,7 +1001,7 @@ function renderTable() {
   // Calculate Analytics based on visible rows
   updateAnalytics(rows);
   
-  // Re-draw SVG chart with currently filtered rows
+  // Re-draw SVG smooth spline chart with currently filtered rows
   drawChart(rows);
 
   // Sort
@@ -771,16 +1016,19 @@ function renderTable() {
 
   updateSortHeaders();
 
+  // Populate desktop table
   document.getElementById('tbody').innerHTML = rows.map((c, idx) => {
     const dtpCls = c.dtp === 'Був в ДТП' ? 'b-dtp' : 'b-nodtp';
     const fuelCls = `b-f-${c.fuel}`;
-    const ph = (c.photos||[]).slice(0,3).map((u, pIdx) => `<img src="${u}" onclick="openGallery(${c.i-1}, ${pIdx})">`).join('');
+    const ph = (c.photos||[]).slice(0,3).map((u, pIdx) => `<img src="${u}" onclick="event.stopPropagation(); openGallery(${c.i-1}, ${pIdx})">`).join('');
+    const isSelected = selectedCarIndex === (c.i - 1);
+    
     return `
-      <tr>
+      <tr data-car-idx="${c.i-1}" class="${isSelected ? 'selected-row' : ''}" onclick="selectCar(${c.i-1})">
         <td style="color: var(--text-muted); font-weight: 500;">${idx+1}</td>
         <td>
           <div style="font-weight: 600; font-size: 14.5px; color: var(--text);">${c.name_en}</div>
-          <div style="font-size: 11px; margin-top: 4px;"><a href="${c.url}" target="_blank" style="color: var(--ac); text-decoration: none; display: inline-flex; align-items: center; gap: 3px;">↗ auto.ria</a></div>
+          <div style="font-size: 11px; margin-top: 4px;"><a href="${c.url}" target="_blank" style="color: var(--ac); text-decoration: none;" onclick="event.stopPropagation()">↗ auto.ria</a></div>
         </td>
         <td style="font-weight: 500;">${c.year}</td>
         <td class="price-col">${c.price}</td>
@@ -788,20 +1036,67 @@ function renderTable() {
         <td><span class="badge ${dtpCls}">${c.dtp}</span></td>
         <td style="color: var(--text-muted); font-weight: 500;">${c.mileage}</td>
         <td><div class="photos-wrap">${ph}</div></td>
-        <td class="${c.active!==false ? 'b-active' : 'b-inactive'}">${c.active!==false ? 'Активне' : 'Знято'}</td>
+        <td>
+          <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 11.5px; border-radius: 8px;" onclick="openImprovements(${c.i-1}, event)">Покращення</button>
+        </td>
       </tr>
     `;
   }).join('');
+
+  // Populate mobile card list
+  const mobileContainer = document.getElementById('mobileCarsGrid');
+  if (mobileContainer) {
+    mobileContainer.innerHTML = rows.map((c, idx) => {
+      const dtpCls = c.dtp === 'Був в ДТП' ? 'b-dtp' : 'b-nodtp';
+      const fuelCls = `b-f-${c.fuel}`;
+      const photosHtml = (c.photos || []).slice(0, 4).map((u, pIdx) => `
+        <img src="${u}" onclick="event.stopPropagation(); openGallery(${c.i-1}, ${pIdx})">
+      `).join('');
+      
+      const isSelected = selectedCarIndex === (c.i - 1);
+      
+      return `
+        <div class="mobile-car-card ${isSelected ? 'selected-card' : ''}" data-car-idx="${c.i-1}" onclick="selectCar(${c.i-1})">
+          <div class="mobile-card-header">
+            <div>
+              <span style="font-size:11px;color:var(--text-muted);font-weight:600;">#${idx+1}</span>
+              <h4 class="mobile-card-title">${c.name_en}</h4>
+              <div style="font-size:11px;margin-top:2px;">
+                <a href="${c.url}" target="_blank" style="color: var(--ac); text-decoration: none;" onclick="event.stopPropagation()">↗ auto.ria</a>
+              </div>
+            </div>
+            <div class="mobile-card-price">${c.price}</div>
+          </div>
+          
+          <div class="mobile-card-specs">
+            <span class="badge ${fuelCls}" style="padding: 4px 10px; font-size: 10px;">${c.fuel}</span>
+            <span class="badge ${dtpCls}" style="padding: 4px 10px; font-size: 10px;">${c.dtp}</span>
+            <span style="font-size: 12px; color: var(--text-muted); font-weight: 600; margin-left: 4px;">${c.year} р. • ${c.mileage}</span>
+          </div>
+          
+          <div class="mobile-card-gallery">${photosHtml}</div>
+          
+          <div class="mobile-card-actions">
+            <button class="btn btn-secondary" style="padding: 6px 14px; font-size: 12px; border-radius: 8px;" onclick="openImprovements(${c.i-1}, event)">Покращення</button>
+            <span class="${c.active!==false ? 'b-active' : 'b-inactive'}" style="font-size: 12.5px; font-weight: 600;">
+              ${c.active!==false ? 'Активне' : 'Знято'}
+            </span>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // Update large detail banner card
+  renderDetailBanner();
 }
 
 function updateSortHeaders() {
   document.querySelectorAll('th[onclick]').forEach(th => {
-    // Extract column name from the onclick attribute
     const m = th.getAttribute('onclick').match(/'(.+)'/);
     if (!m) return;
     const col = m[1];
     
-    // Clear existing indicators
     let label = th.textContent.replace(/ [▲▼]/g, '');
     if (col === sortCol) {
       label += sortAsc ? ' ▲' : ' ▼';
@@ -838,18 +1133,12 @@ function updateAnalytics(rows) {
   document.getElementById('statMinN').textContent = min.n;
 }
 
-// --- Dynamic SVG Chart Logic ---
+// --- Luxury Curved SVG Spline Chart Logic ---
 function drawChart(filteredRows) {
   const carsToUse = filteredRows || allCars;
   const svg = document.getElementById('priceChart');
   const desc = document.getElementById('chartDesc');
   
-  // Categorize prices:
-  // Bracket 1: < $10k
-  // Bracket 2: $10k - $20k
-  // Bracket 3: $20k - $30k
-  // Bracket 4: $30k - $50k
-  // Bracket 5: > $50k
   const brackets = [
     { label: "< $10k", count: 0, min: 0, max: 9999 },
     { label: "$10k - $20k", count: 0, min: 10000, max: 19999 },
@@ -873,12 +1162,12 @@ function drawChart(filteredRows) {
   });
   
   if (validPricesCount === 0) {
-    desc.textContent = "Немає даних для побудови графіка";
+    desc.textContent = "Немає достатніх даних для графіка";
     svg.innerHTML = "";
     return;
   }
   
-  desc.textContent = `Розраховано на основі ${validPricesCount} авто`;
+  desc.textContent = `Розраховано на основі ${validPricesCount} пропозицій`;
   
   const maxCount = Math.max(...brackets.map(b => b.count));
   const svgWidth = 600;
@@ -893,6 +1182,23 @@ function drawChart(filteredRows) {
   
   let chartHtml = "";
   
+  // Translucent glowing gradients in defs
+  chartHtml += `
+    <defs>
+      <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="var(--ac)" stop-opacity="0.35"/>
+        <stop offset="100%" stop-color="var(--ac)" stop-opacity="0.00"/>
+      </linearGradient>
+      <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+        <feGaussianBlur stdDeviation="3" result="blur" />
+        <feMerge>
+          <feMergeNode in="blur" />
+          <feMergeNode in="SourceGraphic" />
+        </feMerge>
+      </filter>
+    </defs>
+  `;
+  
   // Horizontal grid lines
   const gridLines = 3;
   for (let i = 0; i <= gridLines; i++) {
@@ -904,21 +1210,44 @@ function drawChart(filteredRows) {
     `;
   }
   
-  // Render Bars
-  const barWidth = 65;
+  // Map points to coordinates
+  const barWidth = 60;
   const gap = (graphWidth - barWidth * brackets.length) / (brackets.length - 1);
   
-  brackets.forEach((b, i) => {
-    const x = paddingLeft + (barWidth + gap) * i;
+  const coords = brackets.map((b, i) => {
+    const x = paddingLeft + (barWidth + gap) * i + barWidth/2;
     const barHeight = maxCount > 0 ? (b.count / maxCount) * graphHeight : 0;
     const y = paddingTop + graphHeight - barHeight;
-    
-    // Draw Bar and Count Label
+    return { x, y, label: b.label, count: b.count };
+  });
+  
+  // Generate smooth cubic Bezier spline path
+  let pathD = `M ${coords[0].x} ${coords[0].y}`;
+  for (let i = 0; i < coords.length - 1; i++) {
+    const cpX1 = coords[i].x + (barWidth + gap) / 2.2;
+    const cpY1 = coords[i].y;
+    const cpX2 = coords[i+1].x - (barWidth + gap) / 2.2;
+    const cpY2 = coords[i+1].y;
+    pathD += ` C ${cpX1} ${cpY1}, ${cpX2} ${cpY2}, ${coords[i+1].x} ${coords[i+1].y}`;
+  }
+  
+  // Close shape for gradient fill area
+  const fillD = `${pathD} L ${coords[coords.length - 1].x} ${paddingTop + graphHeight} L ${coords[0].x} ${paddingTop + graphHeight} Z`;
+  
+  // Draw spline area fill & stroke line
+  chartHtml += `
+    <path d="${fillD}" fill="url(#chartGradient)" />
+    <path d="${pathD}" fill="none" stroke="var(--ac)" stroke-width="3" filter="url(#glow)" style="stroke-linecap: round;" />
+  `;
+  
+  // Draw points and axis labels
+  coords.forEach((coord, i) => {
+    // Interactive glowing circle peak
     chartHtml += `
       <g>
-        <rect class="svg-bar" x="${x}" y="${y}" width="${barWidth}" height="${barHeight}" />
-        <text class="svg-text" x="${x + barWidth/2}" y="${y - 8}">${b.count > 0 ? b.count : ''}</text>
-        <text class="svg-axis-label" x="${x + barWidth/2}" y="${svgHeight - paddingBottom + 18}">${b.label}</text>
+        <circle cx="${coord.x}" cy="${coord.y}" r="5" fill="var(--bg)" stroke="var(--ac)" stroke-width="3" filter="url(#glow)" style="transition: r 0.2s; cursor:pointer;" />
+        <text class="svg-text" x="${coord.x}" y="${coord.y - 10}" filter="url(#glow)">${coord.count > 0 ? coord.count : ''}</text>
+        <text class="svg-axis-label" x="${coord.x}" y="${svgHeight - paddingBottom + 18}">${coord.label}</text>
       </g>
     `;
   });
@@ -959,7 +1288,6 @@ function updateLightbox() {
          onclick="selectSlide(${i})">
   `).join('');
   
-  // Smooth scroll active thumb in slider container
   const activeThumb = thumbsContainer.querySelector('.lightbox-thumb.active');
   if (activeThumb) {
     activeThumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
@@ -994,14 +1322,15 @@ function closeGallery() {
 // Keyboard navigation
 document.addEventListener('keydown', (e) => {
   const modal = document.getElementById('modal');
-  if (!modal || !modal.classList.contains('open')) return;
+  if (modal && modal.classList.contains('open')) {
+    if (e.key === 'ArrowRight') nextSlide();
+    else if (e.key === 'ArrowLeft') prevSlide();
+    else if (e.key === 'Escape') closeGallery();
+  }
   
-  if (e.key === 'ArrowRight') {
-    nextSlide();
-  } else if (e.key === 'ArrowLeft') {
-    prevSlide();
-  } else if (e.key === 'Escape') {
-    closeGallery();
+  const impModal = document.getElementById('improvementsModal');
+  if (impModal && impModal.classList.contains('open')) {
+    if (e.key === 'Escape') closeImprovements();
   }
 });
 
